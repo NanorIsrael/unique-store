@@ -6,7 +6,9 @@ export interface IUserService {
 }
 
 export default class UserService {
-  static async createUser(user: CreateUserDto): Promise<UserDoc> {
+  constructor() {}
+
+  async createUser(user: CreateUserDto): Promise<UserDoc> {
     // name: string, email: string, password: string
     const newUser = new User(user);
     return newUser.save();

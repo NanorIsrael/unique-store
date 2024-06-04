@@ -1,7 +1,7 @@
 import mongoose, { Connection, Mongoose } from "mongoose";
 
 export interface DBUtil {
-  userCollection: () => Promise<mongoose.Collection>;
+  getCollections: () => void;
 }
 
 class DBImplementation implements DBUtil {
@@ -29,12 +29,8 @@ class DBImplementation implements DBUtil {
     }
 
     try {
-      const mongooseInstance: Mongoose = await mongoose.connect(this.mongoUri, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      } as mongoose.ConnectOptions);
+      const mongooseInstance: Mongoose = await mongoose.connect(this.mongoUri);
       this.db = mongooseInstance.connection;
-      console.log("Connected to MongoDB");
       return this.db;
     } catch (error) {
       console.error("MongoDB connection error:", error);
@@ -42,9 +38,12 @@ class DBImplementation implements DBUtil {
     }
   }
 
-  public async userCollection(): Promise<mongoose.Collection> {
+  public async getDBConection() {
+    await this.connect();
+  }
+  public async getCollections(): Promise<any> {
     const db = await this.connect();
-    return db.collection("user");
+    return db.listCollections();
   }
 }
 

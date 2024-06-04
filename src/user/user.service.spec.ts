@@ -8,7 +8,7 @@ describe("UserService", () => {
   let service: IUserService;
 
   beforeEach(async () => {
-    service = UserService;
+    service = new UserService();
 
     testUser = {
       email: "george.bluth@reqres.in",
