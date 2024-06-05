@@ -10,7 +10,7 @@ export interface IRedis {
 }
 
 class RedisClient implements IRedis {
-  client: RedisClientType;
+  private client: RedisClientType;
   isConnected: boolean;
 
   constructor() {

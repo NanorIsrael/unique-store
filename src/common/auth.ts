@@ -2,7 +2,6 @@ export function getAuthHeader(headers: {
   [key: string]: string | string[] | undefined;
 }): string | null {
   const authHeader = headers["authorization"] as string;
-  console.log(authHeader);
   if (!authHeader) {
     return null;
   }

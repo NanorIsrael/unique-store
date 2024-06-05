@@ -1,9 +1,9 @@
 // models/User.js
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import * as bcrypt from "bcryptjs";
 
 export interface IUser extends UserDoc {
-  _id: string;
+  _id: Types.ObjectId;
 }
 
 export interface UserDoc extends Document {

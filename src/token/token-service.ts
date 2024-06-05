@@ -1,18 +1,27 @@
 import { DateTime } from "luxon";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 import dataSource from "../utils";
 import TokenDto from "./token-dto";
 import Token, { TokenDoc } from "./token-schema";
 import redisClient from "../common/redis";
+import BadRequestError from "../common/error-handlers/badrequest";
+import logger from "../common/logging/logger";
+import { Types } from "mongoose";
 
-enum token {
+export enum token {
   ACCESS_TOKEN = "access_token",
   REFRESH_TOKEN = "refresh_token",
 }
 
+interface IPayload {
+  type: string;
+  accountId: string;
+}
 class TokenService {
-  constructor() {}
+  constructor() {
+    dataSource.getDBConection();
+  }
 
   async findToken(kwags: {
     [key: string]: string;
@@ -22,13 +31,13 @@ class TokenService {
     if (!searchParam) {
       throw new Error("Invalid token");
     }
-    await dataSource.getDBConection();
     const result = await Token.findOne(kwags);
     return result;
   }
 
-  async deleteToken(kwags: { [key: string]: string }): Promise<void> {
-    const searchParam: string = kwags["account_id"] || kwags["reset_token"];
+  async deleteToken(kwags: { [key: string]: Types.ObjectId }): Promise<void> {
+    const searchParam: string | Types.ObjectId =
+      kwags["user_id"] || kwags["reset_token"];
 
     if (!searchParam) {
       throw new Error("Invalid token");
@@ -37,7 +46,7 @@ class TokenService {
     await Token.findOneAndDelete(kwags);
   }
 
-  async createTokens(userId: string): Promise<{
+  async createTokens(userId: Types.ObjectId): Promise<{
     accessToken: string;
     refreshToken: string;
     accessTokenExpires: string;
@@ -47,9 +56,8 @@ class TokenService {
       throw new Error("account id required");
     }
     try {
-      const TokenDoc = await Token.findById({ _id: userId });
+      const TokenDoc = await Token.findOne({ user_id: userId });
       if (TokenDoc) {
-        await redisClient.del(JSON.stringify(userId));
         await this.deleteToken({ user_id: userId });
       }
       // generate access token
@@ -65,9 +73,9 @@ class TokenService {
         token.ACCESS_TOKEN,
       );
 
-      await redisClient.set(JSON.stringify(userId), accessToken, 1000 * 5 * 60);
+      await redisClient.set(accessToken, JSON.stringify(userId), 1000 * 5 * 60);
 
-      // generate refresh token
+      // // generate refresh token
       const refreshExpiresIn = DateTime.now().plus({
         days: Number(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN_DAYS as string),
       });
@@ -93,7 +101,7 @@ class TokenService {
     }
   }
 
-  generateToken(userId: string, expires: number, type: string) {
+  generateToken(userId: Types.ObjectId, expires: number, type: string) {
     const secret = process.env.JWT_SECRET as string;
 
     const payload = {
@@ -104,32 +112,36 @@ class TokenService {
     };
     return jwt.sign(payload, secret);
   }
+
+  async verifyToken(authToken: string): Promise<string | null | undefined> {
+    const payload: JwtPayload | string = jwt.verify(
+      authToken,
+      process.env.JWT_SECRET as string,
+    );
+
+    if (payload.hasOwnProperty("type")) {
+      const payloadData = payload as IPayload;
+
+      if (payloadData.type === token.REFRESH_TOKEN) {
+        const token = await Token.findOne({
+          reset_token: authToken,
+        }).exec();
+
+        return token?.user_id;
+      }
+
+      if (payloadData.type === token.ACCESS_TOKEN) {
+        const user_id = await redisClient.get(
+          JSON.stringify(payloadData.accountId),
+        );
+        return user_id;
+      }
+    } else {
+      logger.log("debug", payload);
+      throw new BadRequestError(payload as string);
+    }
+    return null;
+  }
 }
 
 export default TokenService;
-
-// async function verifyToken(token, type) {
-//   try {
-//       const payload = jwt.verify(token, process.env.JWT_SECRET);
-
-//       if(payload.type === type) {
-
-//           const tokenData =[payload.accountId, type];
-
-//           const tokenQuery = 'SELECT at.account_id, CASE WHEN (SELECT id FROM blacklisted_account_tokens WHERE token_id=at.id) ISNULL THEN false ELSE true END "isBlacklisted" FROM account_tokens at  WHERE account_id=$1';
-//           const tokenRow = await db.oneOrNone(tokenQuery, tokenData);
-
-//           if(tokenRow && !tokenRow['isBlacklisted']) {
-//               return tokenRow;
-//           } else {
-//               return new Error('Invalid token.');
-//           }
-
-//       } else {
-//           return  new Error('Invalid token type.');
-//       }
-
-//   } catch(error) {
-//       return error;
-//   }
-// }

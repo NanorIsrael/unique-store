@@ -6,6 +6,7 @@ import Token from "./token-schema";
 import redisClient from "../common/redis";
 import { UserTokens } from "./token-dto";
 import "../utils";
+import { Types } from "mongoose";
 
 // Mock the dependencies
 jest.mock("../common/redis");
@@ -23,7 +24,10 @@ describe("TokenService", () => {
   let mockToken: UserTokens;
 
   beforeEach(() => {
-    mockToken = { user_id: "user1", reset_token: "token1" };
+    mockToken = {
+      user_id: new Types.ObjectId("6660b04c5c57ecff6626ba55"),
+      reset_token: "token1",
+    };
     tokenService = new TokenService();
   });
 
@@ -53,22 +57,22 @@ describe("TokenService", () => {
     });
 
     it("should delete a token if found", async () => {
-      await tokenService.deleteToken({ account_id: "user1" });
+      await tokenService.deleteToken({ user_id: mockToken.user_id });
       expect(Token.findOneAndDelete).toHaveBeenCalledWith({
-        account_id: "user1",
+        user_id: new Types.ObjectId("6660b04c5c57ecff6626ba55"),
       });
     });
   });
 
   describe("createTokens", () => {
     it("should throw an error if no userId is provided", async () => {
-      await expect(tokenService.createTokens("")).rejects.toThrow(
-        "account id required",
-      );
+      await expect(
+        tokenService.createTokens(null as unknown as Types.ObjectId),
+      ).rejects.toThrow("account id required");
     });
 
     it("should create tokens and save them", async () => {
-      const mockUserId = "user1";
+      const mockUserId = mockToken.user_id;
       (Token.findById as jest.Mock).mockResolvedValue(null);
       const mockAccessToken = "access_token";
       const mockRefreshToken = "refresh_token";
@@ -84,7 +88,9 @@ describe("TokenService", () => {
       (redisClient.set as jest.Mock).mockResolvedValue({
         mockUserId: mockAccessToken,
       });
-      const result = await tokenService.createTokens(mockUserId);
+      const result = await tokenService.createTokens(
+        new Types.ObjectId(mockToken.user_id),
+      );
 
       expect(result).toEqual({
         accessToken: mockAccessToken,
@@ -94,11 +100,11 @@ describe("TokenService", () => {
       });
 
       expect(redisClient.set).toHaveBeenCalledWith(
-        JSON.stringify(mockUserId),
         mockAccessToken,
+        JSON.stringify(mockUserId),
         1000 * 5 * 60,
       );
-      expect(Token.findById).toHaveBeenCalledWith({ _id: mockUserId });
+      expect(Token.findById).toHaveBeenCalledWith({ user_id: mockUserId });
       expect(Token.prototype.save).toHaveBeenCalled();
     });
   });

@@ -1,6 +1,5 @@
 // models/User.js
-import mongoose from "mongoose";
-import User from "../user/user-schema";
+import mongoose, { Schema } from "mongoose";
 
 export interface TokenDoc extends Document {
   reset_token: string;
@@ -13,8 +12,8 @@ const tokenSchema = new mongoose.Schema({
     required: true,
   },
   user_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: User,
+    type: Schema.Types.ObjectId,
+    ref: "User",
     required: true,
   },
 });

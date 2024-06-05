@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
-  IsAlphanumeric,
   IsEmail,
   IsNotEmpty,
   IsString,
@@ -23,7 +22,7 @@ class IsMixtureOfLettersNumbersSymbolsConstraint
   }
 
   defaultMessage(args: ValidationArguments) {
-    return "Text must contain letters, numbers, and at least one symbol.";
+    return "password must contain letters, numbers, and at least one symbol.";
   }
 }
 
