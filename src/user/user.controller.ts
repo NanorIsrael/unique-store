@@ -5,8 +5,6 @@ import { CreateUserDto, LoginUserDto } from "./user-dto";
 import UserService, { IUserService } from "./user-service";
 import { Types } from "mongoose";
 
-import dataSource from "../utils";
-import User, { IUser } from "./user-schema";
 import TokenService from "../token/token-service";
 import { getAuthHeader } from "../common/auth";
 import BadRequestError from "../common/error-handlers/badrequest";
@@ -14,17 +12,6 @@ import RequestValidationError from "../common/error-handlers/validation";
 import redisClient from "../common/redis";
 
 class UserController {
-  private static async findUserByIdOrEmail(data: {
-    [key: string]: string;
-  }): Promise<IUser | null> {
-    await dataSource.getDBConection();
-    if (data.hasOwnProperty("email")) {
-      return await User.findOne({ email: data["email"] });
-    }
-
-    return await User.findById(data["userId"]);
-  }
-
   static async findAndCreateUser(
     req: Request,
     res: Response,
@@ -39,13 +26,13 @@ class UserController {
       if (errors.length > 0) {
         throw new RequestValidationError(errors);
       } else {
-        const existingUser = await UserController.findUserByIdOrEmail({
+        const service: IUserService = new UserService();
+        const existingUser = await service.findUserByIdOrEmail({
           email,
         });
         if (existingUser) {
           throw new BadRequestError("email is in use.");
         }
-        const service: IUserService = new UserService();
         const userDoc = await service.createUser(userData);
         res.status(201).json({ email: userDoc.email });
       }
@@ -71,7 +58,8 @@ class UserController {
       if (errors.length > 0) {
         throw new RequestValidationError(errors);
       } else {
-        const existingUser = await UserController.findUserByIdOrEmail({
+        const service: IUserService = new UserService();
+        const existingUser = await service.findUserByIdOrEmail({
           email,
         });
         if (!existingUser) {

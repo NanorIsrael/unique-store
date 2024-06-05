@@ -104,7 +104,7 @@ describe("TokenService", () => {
         JSON.stringify(mockUserId),
         1000 * 5 * 60,
       );
-      expect(Token.findById).toHaveBeenCalledWith({ user_id: mockUserId });
+      expect(Token.findOne).toHaveBeenCalledWith({ user_id: mockUserId });
       expect(Token.prototype.save).toHaveBeenCalled();
     });
   });
