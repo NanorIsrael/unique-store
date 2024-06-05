@@ -6,6 +6,7 @@ import UserService, { IUserService } from "./user-service";
 import dataSource from "../utils";
 import User, { IUser } from "./user-schema";
 import TokenService from "../token/token-service";
+import { getAuthHeader } from "../common/auth";
 
 class UserController {
   private static async findUserByIdOrEmail(data: {
@@ -46,12 +47,7 @@ class UserController {
   }
 
   static async userLogin(req: Request, res: Response) {
-    const authHeader = req.headers["authorization"] as string;
-    if (!authHeader) {
-      return res.status(403).json({ error: "header must inclue auth" });
-    }
-
-    let authData = authHeader.split(" ")[1];
+    let authData = getAuthHeader(req.headers);
     authData = Buffer.from(authData, "base64").toString();
     const credentials = authData.split(":");
     const [email, password] = credentials;
