@@ -14,6 +14,6 @@ module.exports = {
   coverageDirectory: "coverage",
   // The test environment that will be used for testing
   testEnvironment: "node",
-  setupFiles: ["<rootDir>/src/setupTests.ts"],
-  //   setupFilesAfterEnv: ['<rootDir>/src/*.ts'],
+  setupFiles: ["<rootDir>/src/setupFiles.ts"],
+  setupFilesAfterEnv: ["<rootDir>/src/setupTest.ts"],
 };

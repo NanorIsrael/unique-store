@@ -1,14 +1,16 @@
 import { validate } from "class-validator";
 import { Request, Response } from "express";
-import CreateUserDto from "./user-dto";
+import * as bcrypt from "bcryptjs";
+import { CreateUserDto, LoginUserDto } from "./user-dto";
 import UserService, { IUserService } from "./user-service";
 import dataSource from "../utils";
-import User, { UserDoc } from "./user-schema";
+import User, { IUser } from "./user-schema";
+import TokenService from "../token/token-service";
 
 class UserController {
   private static async findUserByIdOrEmail(data: {
     [key: string]: string;
-  }): Promise<UserDoc | null> {
+  }): Promise<IUser | null> {
     await dataSource.getDBConection();
     if (data.hasOwnProperty("email")) {
       return await User.findOne({ email: data["email"] });
@@ -35,7 +37,48 @@ class UserController {
         }
         const service: IUserService = new UserService();
         const userDoc = await service.createUser(userData);
-        res.json({ email: userDoc.email });
+        res.status(201).json({ email: userDoc.email });
+      } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: "server error" });
+      }
+    }
+  }
+
+  static async userLogin(req: Request, res: Response) {
+    const { email, password } = req.body;
+    // const authHeader = req.headers["auth"] as string;
+    // if (!authHeader) {
+    //   return res.status(403).json({ error: "header must inclue auth" });
+    // }
+    // const authData = authHeader.split(":")[1];
+    // const credentials = Buffer.from(authData).toString("base64");
+    // console.log(credentials);
+    const userData = new LoginUserDto(email, password);
+    const errors = await validate(userData);
+
+    if (errors.length > 0) {
+      return res.status(400).json(errors);
+    } else {
+      try {
+        const existingUser = await UserController.findUserByIdOrEmail({
+          email,
+        });
+        if (!existingUser) {
+          return res.status(403).json({ error: "user does not exists!" });
+        }
+        const isValidPassword = await bcrypt.compare(
+          password,
+          existingUser.password,
+        );
+        if (isValidPassword) {
+          //genrate tokens an save in db
+          const token = new TokenService();
+          const tokens = await token.createTokens(existingUser._id);
+          return res.status(200).json(tokens);
+        } else {
+          return res.status(401).json({ error: "wrong password." });
+        }
       } catch (err) {
         console.log(err);
         res.status(500).json({ error: "server error" });
@@ -43,4 +86,5 @@ class UserController {
     }
   }
 }
+
 export default UserController;

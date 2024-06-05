@@ -1,4 +1,4 @@
-import CreateUserDto from "./user-dto";
+import { CreateUserDto } from "./user-dto";
 import User, { UserDoc } from "./user-schema";
 
 export interface IUserService {
@@ -13,4 +13,10 @@ export default class UserService {
     const newUser = new User(user);
     return newUser.save();
   }
+
+  //   async createUser(user: CreateUserDto): Promise<UserDoc> {
+  //     // name: string, email: string, password: string
+  //     const newUser = new User(user);
+  //     return newUser.save();
+  //   }
 }

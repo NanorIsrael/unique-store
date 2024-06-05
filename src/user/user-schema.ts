@@ -2,6 +2,10 @@
 import mongoose from "mongoose";
 import * as bcrypt from "bcryptjs";
 
+export interface IUser extends UserDoc {
+  _id: string;
+}
+
 export interface UserDoc extends Document {
   name: string;
   email: string;
