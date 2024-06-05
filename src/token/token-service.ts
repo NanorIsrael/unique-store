@@ -49,7 +49,8 @@ class TokenService {
     try {
       const TokenDoc = await Token.findById({ _id: userId });
       if (TokenDoc) {
-        await this.deleteToken({ account_id: userId });
+        await redisClient.del(JSON.stringify(userId));
+        await this.deleteToken({ user_id: userId });
       }
       // generate access token
       const accessExpiresIn = DateTime.now().plus({

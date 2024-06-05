@@ -1,11 +1,10 @@
 export function getAuthHeader(headers: {
   [key: string]: string | string[] | undefined;
-}) {
+}): string | null {
   const authHeader = headers["authorization"] as string;
+  console.log(authHeader);
   if (!authHeader) {
-    return "header must inclue auth";
-    // res.status(403).json({ error: "header must inclue auth" });
+    return null;
   }
-
   return authHeader.split(" ")[1];
 }

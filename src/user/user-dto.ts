@@ -1,5 +1,45 @@
-import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {
+  IsAlphanumeric,
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  ValidationArguments,
+  ValidationOptions,
+  ValidatorConstraint,
+  ValidatorConstraintInterface,
+  registerDecorator,
+} from "class-validator";
 
+@ValidatorConstraint({ async: false })
+class IsMixtureOfLettersNumbersSymbolsConstraint
+  implements ValidatorConstraintInterface
+{
+  validate(text: string, args: ValidationArguments) {
+    const hasLetters = /[a-zA-Z]/.test(text);
+    const hasNumbers = /\d/.test(text);
+    const hasSymbols = /[^a-zA-Z\d]/.test(text);
+    return hasLetters && hasNumbers && hasSymbols;
+  }
+
+  defaultMessage(args: ValidationArguments) {
+    return "Text must contain letters, numbers, and at least one symbol.";
+  }
+}
+
+function IsMixtureOfLettersNumbersSymbols(
+  validationOptions?: ValidationOptions,
+) {
+  return function (object: Object, propertyName: string) {
+    registerDecorator({
+      target: object.constructor,
+      propertyName: propertyName,
+      options: validationOptions,
+      constraints: [],
+      validator: IsMixtureOfLettersNumbersSymbolsConstraint,
+    });
+  };
+}
 export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
@@ -12,6 +52,7 @@ export class CreateUserDto {
 
   @IsNotEmpty()
   @IsString()
+  @IsMixtureOfLettersNumbersSymbols()
   readonly password: string;
 
   constructor(email: string, name: string, password: string) {
@@ -29,6 +70,7 @@ export class LoginUserDto {
 
   @IsNotEmpty()
   @IsString()
+  @IsMixtureOfLettersNumbersSymbols()
   readonly password: string;
 
   constructor(email: string, password: string) {

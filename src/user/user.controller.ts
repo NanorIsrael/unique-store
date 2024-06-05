@@ -1,5 +1,5 @@
 import { validate } from "class-validator";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import * as bcrypt from "bcryptjs";
 import { CreateUserDto, LoginUserDto } from "./user-dto";
 import UserService, { IUserService } from "./user-service";
@@ -7,6 +7,8 @@ import dataSource from "../utils";
 import User, { IUser } from "./user-schema";
 import TokenService from "../token/token-service";
 import { getAuthHeader } from "../common/auth";
+import BadRequestError from "../common/error-handlers/badrequest";
+import RequestValidationError from "../common/error-handlers/validation";
 
 class UserController {
   private static async findUserByIdOrEmail(data: {
@@ -46,19 +48,23 @@ class UserController {
     }
   }
 
-  static async userLogin(req: Request, res: Response) {
-    let authData = getAuthHeader(req.headers);
-    authData = Buffer.from(authData, "base64").toString();
-    const credentials = authData.split(":");
-    const [email, password] = credentials;
+  static async userLogin(req: Request, res: Response, next: NextFunction) {
+    try {
+      let authData = getAuthHeader(req.headers);
+      if (!authData) {
+        throw new BadRequestError("header must include authorization");
+      }
 
-    const userData = new LoginUserDto(email, password);
-    const errors = await validate(userData);
+      authData = Buffer.from(authData, "base64").toString();
+      const credentials = authData.split(":");
+      const [email, password] = credentials;
 
-    if (errors.length > 0) {
-      return res.status(400).json(errors);
-    } else {
-      try {
+      const userData = new LoginUserDto(email, password);
+      const errors = await validate(userData);
+
+      if (errors.length > 0) {
+        throw new RequestValidationError(errors);
+      } else {
         const existingUser = await UserController.findUserByIdOrEmail({
           email,
         });
@@ -77,10 +83,9 @@ class UserController {
         } else {
           return res.status(401).json({ error: "wrong password." });
         }
-      } catch (err) {
-        console.log(err);
-        res.status(500).json({ error: "server error" });
       }
+    } catch (error) {
+      next(error);
     }
   }
 }
