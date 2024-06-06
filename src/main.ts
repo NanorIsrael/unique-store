@@ -1,10 +1,9 @@
-import dotenv from "dotenv";
-dotenv.config();
 import express from "express";
 import morgan from "morgan";
 
 import indexRouter from "./routes/index";
 import userRouter from "./routes/user";
+import productRouter from "./routes/product";
 import { errorHandler } from "./common/middlewares/errors";
 import NotFoundError from "./common/error-handlers/not-found";
 
@@ -16,6 +15,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use("/", indexRouter);
 app.use("/users", userRouter);
+app.use("/products", productRouter);
 
 app.get("*", () => {
   throw new NotFoundError();

@@ -4,7 +4,7 @@ jest.mock("./utils");
 
 beforeAll(async () => {
   try {
-    const mongouri = process.env.MONGO_URI_TEST as string;
+    const mongouri = process.env.MONGO_URI as string;
     await mongoose.connect(mongouri);
   } catch (error) {
     console.error("MongoDB connection error:", error);

@@ -2,7 +2,6 @@ import { Types } from "mongoose";
 import dataSource from "../utils";
 import ProductDto from "./product-dto";
 import Product from "./product-schema";
-import BadRequestError from "../common/error-handlers/badrequest";
 
 export class ProductService {
   constructor() {
@@ -16,9 +15,9 @@ export class ProductService {
 
   async findProductById(id: Types.ObjectId) {
     const product = await Product.findById({ _id: id });
-    if (!product) {
-      throw new BadRequestError(`product with id: ${id} not found`);
-    }
+    // if (!product) {
+    //   throw new BadRequestError(`product with id: ${id} not found`);
+    // }
     return product;
   }
 

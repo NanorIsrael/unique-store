@@ -1,3 +1,5 @@
 node_modules
 nodemon.json
-algo.js
+
+.env
+.env.test

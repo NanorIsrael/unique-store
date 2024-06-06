@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "myapp API",
   "scripts": {
-    "dev": "nodemon --exec ts-node ./src/main",
+    "dev": "nodemon -r dotenv/config --exec ts-node ./src/main",
     "clean": "rm -rf node_modules",
     "start-dev": "webpack-dev-server --open",
     "build": "tsc -p tsconfig.build.json",
@@ -50,6 +50,8 @@
     "@types/mongoose": "^5.11.97",
     "@types/morgan": "^1.9.9",
     "@types/redis": "^4.0.11",
+    "@types/request": "^2.48.12",
+    "axios": "^1.7.2",
     "bcryptjs": "^2.4.3",
     "class-validator": "^0.14.1",
     "dotenv": "^16.4.5",
