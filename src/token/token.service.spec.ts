@@ -5,14 +5,11 @@ import TokenService from "./token-service";
 import Token from "./token-schema";
 import redisClient from "../common/redis";
 import { UserTokens } from "./token-dto";
-import "../utils";
 import { Types } from "mongoose";
 
 // Mock the dependencies
-jest.mock("../common/redis");
 jest.mock("jsonwebtoken");
 jest.mock("./token-schema");
-jest.mock("../utils");
 jest.mock("../common/redis", () => ({
   set: jest.fn(),
   connect: jest.fn(),

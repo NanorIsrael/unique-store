@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 
+jest.mock("./utils");
+
 beforeAll(async () => {
   try {
     const mongouri = process.env.MONGO_URI_TEST as string;
@@ -11,6 +13,8 @@ beforeAll(async () => {
 });
 
 afterEach(async () => {
+  jest.clearAllMocks();
+
   const collections = await mongoose.connection.db.collections();
   for (let collection of collections) {
     await collection.drop();

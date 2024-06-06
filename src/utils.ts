@@ -10,7 +10,7 @@ class DBImplementation implements DBUtil {
   private static instance: DBImplementation | null = null;
 
   private constructor() {
-    this.mongoUri = process.env.MONGO_URI_TEST as string;
+    this.mongoUri = process.env.MONGO_URI_DEV as string;
     if (!this.mongoUri) {
       throw new Error("MONGO_URI environment variable is not defined");
     }

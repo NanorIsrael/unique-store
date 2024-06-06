@@ -1,12 +1,14 @@
 // models/User.js
 import mongoose, { Types } from "mongoose";
 
-export interface ProductDoc extends Document {
-  _id: Types.ObjectId;
+export interface IProduct {
   name: string;
   stock: number;
   price: number;
-  createdAt: Date;
+}
+
+export interface ProductDoc extends IProduct, Document {
+  _id: Types.ObjectId;
 }
 
 const productSchema = new mongoose.Schema({
@@ -19,6 +21,6 @@ const productSchema = new mongoose.Schema({
   },
 });
 
-const Product = mongoose.model("Product", productSchema);
+const Product = mongoose.model<ProductDoc>("Product", productSchema);
 
 export default Product;

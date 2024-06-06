@@ -4,7 +4,7 @@ import ProductDto from "./product-dto";
 import Product from "./product-schema";
 import BadRequestError from "../common/error-handlers/badrequest";
 
-class ProductService {
+export class ProductService {
   constructor() {
     dataSource.getDBConection();
   }
@@ -35,4 +35,5 @@ class ProductService {
     return { page, limit, total, pages, data };
   }
 }
+
 export default new ProductService();
