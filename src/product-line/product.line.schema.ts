@@ -2,26 +2,27 @@
 import mongoose, { Types } from "mongoose";
 
 export interface IProductLine {
-  name: string;
-  stock: number;
-  price: number;
+  quantity: number;
+  productId: Types.ObjectId;
 }
 
 export interface ProductLineDoc extends IProductLine, Document {
   _id: Types.ObjectId;
+  order_id: Types.ObjectId;
 }
 
 const productLineSchema = new mongoose.Schema({
   quatity: Number,
-  orderId: {
+  order_id: {
     ref: "Order",
-    require: true,
+    type: Types.ObjectId,
   },
-  productId: {
+  product_id: {
     ref: "Product",
-    require: true,
+    type: Types.ObjectId,
+    required: true,
   },
-  createdAt: {
+  created_at: {
     type: Date,
     default: Date.now,
   },

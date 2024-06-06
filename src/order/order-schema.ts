@@ -1,6 +1,6 @@
 // models/User.js
 import mongoose, { Types } from "mongoose";
-import ProductLine, { IProductLine } from "../product-line/product-line.schema";
+import { IProductLine } from "../product-line/product.line.schema";
 
 export interface IOrder {
   products: IProductLine[];
@@ -12,16 +12,22 @@ export interface OrderDoc extends IOrder, Document {
 }
 
 const orderSchema = new mongoose.Schema({
-  products: [ProductLine],
+  products: [
+    {
+      ref: "ProductLine",
+      type: Types.ObjectId,
+    },
+  ],
   user_id: {
     ref: "User",
-    require: true,
+    type: Types.ObjectId,
+    required: true,
   },
-  createdAt: {
+  created_at: {
     type: Date,
     default: Date.now,
   },
-  updatedAt: {
+  updated_at: {
     type: Date,
     default: Date.now,
   },

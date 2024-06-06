@@ -5,7 +5,7 @@ import indexRouter from "./routes/index";
 import userRouter from "./routes/user";
 import productRouter from "./routes/product";
 import { errorHandler } from "./common/middlewares/errors";
-import NotFoundError from "./common/error-handlers/not-found";
+import NotFoundError from "./common/error-handlers/notfound";
 
 const app = express();
 

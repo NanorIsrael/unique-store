@@ -1,8 +1,8 @@
 import { validate } from "class-validator";
 import { NextFunction, Request, Response } from "express";
 import * as bcrypt from "bcryptjs";
-import { CreateUserDto, LoginUserDto } from "./user-dto";
-import UserService, { IUserService } from "./user-service";
+import { CreateUserDto, LoginUserDto } from "./user.dto";
+import UserService, { IUserService } from "./user.service";
 import { Types } from "mongoose";
 
 import TokenService from "../auth/auth-token-service";

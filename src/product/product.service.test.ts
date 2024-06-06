@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 import dataSource from "../utils";
-import Product, { IProduct, ProductDoc } from "./product-schema";
+import Product, { IProduct, ProductDoc } from "./product.schema";
 import { ProductService } from "./product-service";
 
 jest.mock("./product-schema");

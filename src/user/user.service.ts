@@ -1,6 +1,6 @@
 import dataSource from "../utils";
-import { CreateUserDto } from "./user-dto";
-import User, { IUser, UserDoc } from "./user-schema";
+import { CreateUserDto } from "./user.dto";
+import User, { IUser, UserDoc } from "./user.schema";
 
 export interface IUserService {
   createUser(user: CreateUserDto): Promise<UserDoc>;

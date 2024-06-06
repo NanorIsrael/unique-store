@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import productService from "./product-service";
+import productService from "./product.service";
 import BadRequestError from "../common/error-handlers/badrequest";
-import ProductDto from "./product-dto";
+import ProductDto from "./product.dto";
 import { validate } from "class-validator";
 import RequestValidationError from "../common/error-handlers/validation";
 import { Types } from "mongoose";

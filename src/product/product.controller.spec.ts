@@ -1,5 +1,5 @@
 import request from "axios";
-import { IProduct } from "./product-schema";
+import { IProduct } from "./product.schema";
 
 describe("product controller ", () => {
   const baseUrl: string = process.env.SERVER_URL as string;

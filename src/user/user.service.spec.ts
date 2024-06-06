@@ -1,5 +1,5 @@
-import { UserDoc } from "./user-schema";
-import UserService, { IUserService } from "./user-service";
+import { UserDoc } from "./user.schema";
+import UserService, { IUserService } from "./user.service";
 
 describe("UserService", () => {
   let testUser: Partial<UserDoc>;

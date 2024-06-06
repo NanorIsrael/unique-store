@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 import dataSource from "../utils";
-import ProductDto from "./product-dto";
-import Product from "./product-schema";
+import ProductDto from "./product.dto";
+import Product from "./product.schema";
 
 export class ProductService {
   constructor() {
