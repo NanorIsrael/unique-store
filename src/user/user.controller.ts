@@ -5,7 +5,7 @@ import { CreateUserDto, LoginUserDto } from "./user-dto";
 import UserService, { IUserService } from "./user-service";
 import { Types } from "mongoose";
 
-import TokenService from "../token/token-service";
+import TokenService from "../auth/auth-token-service";
 import { getAuthHeader } from "../common/auth";
 import BadRequestError from "../common/error-handlers/badrequest";
 import RequestValidationError from "../common/error-handlers/validation";
