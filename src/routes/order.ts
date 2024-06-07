@@ -5,5 +5,7 @@ import { verifyUser } from "../common/auth";
 const order = express();
 
 order.post("/", verifyUser, OrderController.createOrder);
+order.get("/:id", verifyUser, OrderController.getOrderById);
+order.get("/", verifyUser, OrderController.getOrderPaginated);
 
 export default order;

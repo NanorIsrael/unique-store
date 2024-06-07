@@ -92,9 +92,51 @@ describe("order controller ", () => {
       ),
     );
     const savedOrderResult = savedOrder.data;
-    console.log(savedOrderResult);
 
     expect(savedOrderResult).toHaveProperty("_id");
+  });
+
+  it("should find an order by id", async () => {
+    const res = await request(
+      options(baseUrl + "/products", "POST", { data: newProduct }),
+    );
+    const savedProduct = res.data;
+    const response = await request(
+      options(baseUrl + `/products/${savedProduct._id}`),
+    );
+    const body = response.data;
+
+    expect(response.status).toEqual(200);
+    expect(body).toHaveProperty("_id");
+    expect(body._id).toEqual(savedProduct._id);
+
+    newOrder = {
+      ...newOrder,
+      productLine: [{ productId: savedProduct._id, quantity: 10 }],
+    };
+
+    const savedOrder = await request(
+      options(
+        baseUrl + "/orders",
+        "POST",
+        { data: newOrder },
+        { authorization: `JWT ${accessToken}` },
+      ),
+    );
+    const savedOrderResult = savedOrder.data;
+
+    expect(savedOrderResult).toHaveProperty("_id");
+
+    const searchedOrder = await request(
+      options(baseUrl + `/orders/${savedOrderResult._id}`, "GET", null, {
+        authorization: `JWT ${accessToken}`,
+      }),
+    );
+
+    const searchedOrderDoc = searchedOrder.data;
+
+    expect(searchedOrderDoc).toHaveProperty("_id");
+    expect(searchedOrderDoc._id).toEqual(savedOrderResult._id);
   });
 });
 

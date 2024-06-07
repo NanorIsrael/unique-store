@@ -15,9 +15,7 @@ export class ProductService {
 
   async findProductById(id: Types.ObjectId) {
     const product = await Product.findById({ _id: id });
-    // if (!product) {
-    //   throw new BadRequestError(`product with id: ${id} not found`);
-    // }
+
     return product;
   }
 

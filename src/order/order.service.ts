@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import BadRequestError from "../common/error-handlers/badrequest";
 import ProductLine from "../product-line/product.line.schema";
 import Product from "../product/product.schema";
@@ -36,11 +37,12 @@ export class OrderService {
       }),
     );
 
-    await ProductLine.insertMany(productLineDocs);
+    const savedProductLines = await ProductLine.insertMany(productLineDocs);
 
-    savedOrder.products = productLineDocs.map((line) => line._id);
+    savedOrder.products = savedProductLines.map((line) => line._id);
 
-    return await savedOrder.save();
+    await savedOrder.save();
+    return savedOrder;
   }
 
   async getAllOrdersByPagination(page: number, limit: number) {
@@ -48,6 +50,18 @@ export class OrderService {
     const total = await Order.countDocuments();
     const pages = Math.ceil(total / limit);
     const data = await Order.find({}).skip(skip).limit(limit);
+    return { page, limit, total, pages, data };
+  }
+
+  async findOrderById(id: Types.ObjectId | string) {
+    return await Order.findById({ _id: id });
+  }
+
+  async getAllOrdersPagination(page: number, limit: number) {
+    const skip = (page - 1) * limit;
+    const total = await Order.countDocuments();
+    const pages = Math.ceil(total / limit);
+    const data = await Order.find().skip(skip).limit(limit);
     return { page, limit, total, pages, data };
   }
 }

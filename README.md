@@ -256,3 +256,26 @@ npm run test
 				]
 			}
 			```
+#### Get a order by id
+- /orders/:id:
+	* method: `get`
+	* authentication: `required`
+	* body: `blank`
+	* route params: `product id`
+	* example:
+		- request:  
+			`curl -X GET "localhost:8000/orders/66632f09f8607d85c507683b" -H "Content-type: application/json"`
+
+		- response: 
+			```javascript 
+			{
+				"_id": "66632f09f8607d85c507683b",
+				"products": [
+					"66632f09f8607d85c507683e"
+				],
+				"user_id": "66632ef4f8607d85c5076835",
+				"created_at": "2024-06-07T16:02:17.886Z",
+				"updated_at": "2024-06-07T16:02:17.886Z",
+				"__v": 1
+			}
+			```
