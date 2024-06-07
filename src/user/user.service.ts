@@ -25,6 +25,10 @@ export interface IUserService {
     pages: number;
     data: SecuredUser[];
   }>;
+  updateUser(
+    userId: Types.ObjectId | string,
+    user: Partial<CreateUserDto>,
+  ): Promise<UserDoc | null>;
   deletUserById(userId: string | Types.ObjectId): Promise<UserDoc | null>;
 }
 
@@ -75,6 +79,16 @@ export default class UserService implements IUserService {
     userId: string | Types.ObjectId,
   ): Promise<UserDoc | null> {
     return await User.findByIdAndDelete({ _id: userId });
+  }
+
+  async updateUser(
+    userId: Types.ObjectId | string,
+    user: Partial<CreateUserDto>,
+  ): Promise<UserDoc | null> {
+    const updatedUser = await User.findByIdAndUpdate(userId, user, {
+      new: true,
+    });
+    return updatedUser as UserDoc;
   }
 }
 export const userService = new UserService();

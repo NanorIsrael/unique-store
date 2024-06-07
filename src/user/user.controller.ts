@@ -80,7 +80,7 @@ class UserController {
     }
   }
 
-  static async deletUser(req: Request, res: Response, next: NextFunction) {
+  static async deleteUser(req: Request, res: Response, next: NextFunction) {
     try {
       const { userId } = req.body;
 
@@ -91,6 +91,29 @@ class UserController {
       const user = await userService.deletUserById(userId);
       if (!user) {
         throw new BadRequestError(`user with id: ${userId} does not exist.`);
+      }
+      res.status(200).json(user);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async updateUser(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const { name } = req.body;
+
+      if (!id) {
+        throw new BadRequestError("invalid 'user id' parameter");
+      }
+
+      if (!name) {
+        throw new BadRequestError("invalid 'user id' parameter");
+      }
+
+      const user = await userService.updateUser(id, { name });
+      if (!user) {
+        throw new BadRequestError(`user with id: ${id} does not exist.`);
       }
       res.status(200).json(user);
     } catch (err) {

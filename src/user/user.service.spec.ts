@@ -53,4 +53,15 @@ describe("UserService", () => {
     expect(result).toHaveProperty("_id");
     expect(result?._id).toEqual(user._id);
   });
+
+  it("should update user name", async () => {
+    const user = await service.createUser(testUser as IUser);
+    const updatedUser = { _id: user._id, name: "jupiter", email: user.email };
+    const result = await service.updateUser(user._id, updatedUser);
+
+    expect(result).toBeDefined();
+    expect(result).toHaveProperty("_id");
+    expect(result?._id).toEqual(updatedUser._id);
+    expect(user.name).not.toEqual(updatedUser.name);
+  });
 });
