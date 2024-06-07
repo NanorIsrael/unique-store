@@ -31,6 +31,10 @@ export class ProductService {
     return updatedProduct;
   }
 
+  async deleteProduct(productId: string) {
+    return await Product.findByIdAndDelete(productId);
+  }
+
   async getProductByPagination(page: number, limit: number) {
     const skip = (page - 1) * limit;
     const total = await Product.countDocuments();

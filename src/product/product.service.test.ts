@@ -90,7 +90,7 @@ describe("ProductService", () => {
   });
 
   describe("updateProduct", () => {
-    it("should return all products", async () => {
+    it("should update products", async () => {
       const mockProducts = { name: "product1" };
 
       (Product as any).findByIdAndUpdate.mockResolvedValue({
@@ -105,6 +105,20 @@ describe("ProductService", () => {
         mockProducts,
       );
       expect(result.name).toEqual("updated product name");
+    });
+  });
+
+  describe("deleteProduct", () => {
+    it("should delete product", async () => {
+      (Product as any).findByIdAndDelete.mockResolvedValue({
+        name: "deleted product",
+      });
+
+      const productService = new ProductService();
+      const result = await productService.deleteProduct("8098");
+
+      expect(Product.findByIdAndUpdate).toHaveBeenCalledWith("8098");
+      expect(result.name).toEqual("deleted product");
     });
   });
 

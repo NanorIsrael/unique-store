@@ -58,6 +58,26 @@ class ProductController {
     }
   }
 
+  static async deleteProductById(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const id = req.params["id"];
+
+      if (!id) {
+        throw new BadRequestError("product id required");
+      }
+
+      const product = await productService.deleteProduct(id);
+      res.status(200).json(product);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+
   static async createProduct(req: Request, res: Response, next: NextFunction) {
     try {
       const { name, stock, price } = req.body;
