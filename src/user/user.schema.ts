@@ -2,15 +2,14 @@
 import mongoose, { Types } from "mongoose";
 import * as bcrypt from "bcryptjs";
 
-export interface IUser extends UserDoc {
-  _id: Types.ObjectId;
-}
-
-export interface UserDoc extends Document {
+export interface IUser {
   name: string;
   email: string;
   password: string;
-  createdAt: Date;
+}
+
+export interface UserDoc extends IUser, Document {
+  _id: Types.ObjectId;
 }
 
 const userSchema = new mongoose.Schema({

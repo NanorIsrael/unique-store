@@ -2,8 +2,7 @@ import { validate } from "class-validator";
 import { NextFunction, Request, Response } from "express";
 import * as bcrypt from "bcryptjs";
 import { CreateUserDto, LoginUserDto } from "./user.dto";
-import UserService, { IUserService } from "./user.service";
-import { Types } from "mongoose";
+import UserService, { IUserService, userService } from "./user.service";
 
 import TokenService, { token } from "../auth/auth-token-service";
 import { getAuthHeader } from "../common/auth";
@@ -40,6 +39,30 @@ class UserController {
       next(err);
     }
   }
+  static async getAllUsersByPagination(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
+      const limit = req.query.limit
+        ? parseInt(req.query.limit as string, 10)
+        : 10;
+
+      if (isNaN(page) || page < 1) {
+        throw new BadRequestError("Invalid 'page' query parameter");
+      }
+      if (isNaN(limit) || limit < 1) {
+        throw new BadRequestError("Invalid 'limit' query parameter");
+      }
+
+      const users = await userService.getAllUsers(page, limit);
+      res.status(200).json(users);
+    } catch (err) {
+      next(err);
+    }
+  }
 
   static async userLogin(req: Request, res: Response, next: NextFunction) {
     try {
@@ -58,8 +81,7 @@ class UserController {
       if (errors.length > 0) {
         throw new RequestValidationError(errors);
       } else {
-        const service: IUserService = new UserService();
-        const existingUser = await service.findUserByIdOrEmail({
+        const existingUser = await userService.findUserByIdOrEmail({
           email,
         });
         if (!existingUser) {
@@ -79,6 +101,8 @@ class UserController {
         }
       }
     } catch (error) {
+      console.log("=============>", error);
+
       next(error);
     }
   }

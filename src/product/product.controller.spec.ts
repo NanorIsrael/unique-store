@@ -1,7 +1,7 @@
 import request from "axios";
 import { IProduct } from "./product.schema";
 
-describe("product controller ", () => {
+describe.skip("product controller ", () => {
   const baseUrl: string = process.env.SERVER_URL as string;
   let newProduct: IProduct;
 

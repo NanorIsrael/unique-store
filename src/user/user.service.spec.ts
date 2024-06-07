@@ -1,8 +1,8 @@
-import { UserDoc } from "./user.schema";
+import { IUser } from "./user.schema";
 import UserService, { IUserService } from "./user.service";
 
 describe("UserService", () => {
-  let testUser: Partial<UserDoc>;
+  let testUser: IUser;
   let service: IUserService;
 
   beforeEach(async () => {
@@ -20,9 +20,17 @@ describe("UserService", () => {
   });
 
   it("should create a new user", async () => {
-    const result = await service.createUser(testUser as UserDoc);
+    const result = await service.createUser(testUser as IUser);
     expect(result).toBeDefined();
     expect(result.email).toEqual(testUser.email);
     expect(result.password).not.toEqual(testUser.password);
+  });
+
+  it("should get all users", async () => {
+    await service.createUser(testUser as IUser);
+
+    const result = await service.getAllUsers(1, 10);
+    expect(result).toBeDefined();
+    expect(result.data.length).toBeGreaterThan(0);
   });
 });
