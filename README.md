@@ -154,14 +154,61 @@ npm run test
 		- response: 
 			```javascript 
 			{
-				{
-					"_id": "6662f0a10169005292883001",
-					"name": "testUser",
-					"email": "testuser@gmil.com",
-					"created_at": "2024-06-07T01:34:01.271Z",
-					"__v": 0
-				},
+				"_id": "6662f0a10169005292883001",
+				"name": "testUser",
+				"email": "testuser@gmil.com",
+				"created_at": "2024-06-07T01:34:01.271Z",
+				"__v": 0
 			}
+			```
+
+#### Update a user by id
+- /users/:id:
+	* method: `put`
+	* authentication: `required`
+	* body: `{name: string}`
+	* route params: `user id`
+	* example:
+		- request:  
+			`curl -X PUT "localhost:8000/users/6662f0a10169005292883001" -H "Content-type: application/json" -d '{"name": "Jane Doe"}'`
+
+		- response: 
+			```javascript 
+				{
+					
+					"_id": "66632ef4f8607d85c5076835",
+					"name": "Clottey",
+					"email": "testuser1@gmil.com",
+					"password": "$2a$09$RItdVqcV4w7ewSlwo4zMxuEGmve/QKz7pdvvssbOE49LPKwxd/.Vi",
+					"created_at": "2024-06-07T16:01:56.540Z",
+					"__v": 0
+
+				}
+			```
+
+
+#### Delete a user by id
+- /users/:id:
+	* method: `delete`
+	* authentication: `required`
+	* body: `blank`
+	* route params: `none`
+	* example:
+		- request:  
+			`curl -X DELETE "localhost:8000/users" -H "Content-type: application/json"`
+
+		- response: 
+			```javascript 
+				{
+					
+					"_id": "66632ef4f8607d85c5076835",
+					"name": "Clottey",
+					"email": "testuser1@gmil.com",
+					"password": "$2a$09$RItdVqcV4w7ewSlwo4zMxuEGmve/QKz7pdvvssbOE49LPKwxd/.Vi",
+					"created_at": "2024-06-07T16:01:56.540Z",
+					"__v": 0
+
+				}
 			```
 
 
@@ -216,13 +263,12 @@ npm run test
 		- response: 
 			```javascript 
 			{
-				{
-					"_id": "666263892789061b37756b19",
-					"stock": 5,
-					"price": 99.90,
-					"created_at": "2024-06-07T01:34:01.271Z",
-					"__v": 0
-			},
+
+				"_id": "666263892789061b37756b19",
+				"stock": 5,
+				"price": 99.90,
+				"created_at": "2024-06-07T01:34:01.271Z",
+				"__v": 0
 			}
 			```
 
