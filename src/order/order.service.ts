@@ -3,7 +3,7 @@ import ProductLine from "../product-line/product.line.schema";
 import Product from "../product/product.schema";
 import dataSource from "../utils";
 import OrderDto from "./order.dto";
-import Order from "./order-schema";
+import Order from "./order.schema";
 
 export class OrderService {
   constructor() {
@@ -12,9 +12,11 @@ export class OrderService {
 
   async createOrder(orderDto: OrderDto) {
     const productLine = orderDto.productLine;
+
     const productLineDocs = await Promise.all(
       productLine.map(async (line) => {
         const product = await Product.findById(line.productId);
+
         if (!product) {
           throw new BadRequestError(
             `Product with id ${line.productId} not found`,
@@ -30,9 +32,10 @@ export class OrderService {
     await ProductLine.insertMany(productLineDocs);
 
     const order = new Order({
-      user: orderDto.userId,
+      user_id: orderDto.userId,
       products: productLineDocs.map((line) => line._id),
     });
+
     return await order.save();
   }
 }

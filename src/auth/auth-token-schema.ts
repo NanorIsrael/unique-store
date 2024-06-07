@@ -1,9 +1,9 @@
 // models/User.js
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 
 export interface authTokenDoc extends Document {
   reset_token: string;
-  user_id: string;
+  user_id: Types.ObjectId;
 }
 
 const authTokenSchema = new mongoose.Schema({

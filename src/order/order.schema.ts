@@ -1,26 +1,26 @@
 // models/User.js
-import mongoose, { Types } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import { IProductLine } from "../product-line/product.line.schema";
 
 export interface IOrder {
   products: IProductLine[];
-  user_id: Types.ObjectId;
+  user_id: Schema.Types.ObjectId;
 }
 
 export interface OrderDoc extends IOrder, Document {
-  _id: Types.ObjectId;
+  _id: Schema.Types.ObjectId;
 }
 
 const orderSchema = new mongoose.Schema({
   products: [
     {
       ref: "ProductLine",
-      type: Types.ObjectId,
+      type: Schema.Types.ObjectId,
     },
   ],
   user_id: {
     ref: "User",
-    type: Types.ObjectId,
+    type: Schema.Types.ObjectId,
     required: true,
   },
   created_at: {

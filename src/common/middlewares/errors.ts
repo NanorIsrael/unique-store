@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import CustomError from "../error-handlers/custom";
-import { JsonWebTokenError } from "jsonwebtoken";
+import { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
 
 export const errorHandler = (
   err: Error,
@@ -12,6 +12,10 @@ export const errorHandler = (
     return res.status(err.statusCode).json({ errors: err.serializeErrors() });
   }
   if (err instanceof JsonWebTokenError) {
+    return res.status(400).json({ errors: [{ message: err.message }] });
+  }
+
+  if (err instanceof TokenExpiredError) {
     return res.status(400).json({ errors: [{ message: err.message }] });
   }
 

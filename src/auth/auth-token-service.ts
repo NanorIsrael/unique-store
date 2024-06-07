@@ -113,7 +113,10 @@ class TokenService {
     return jwt.sign(payload, secret);
   }
 
-  async verifyToken(authToken: string): Promise<string | null | undefined> {
+  async verifyToken(
+    authToken: string,
+    tokenType?: string,
+  ): Promise<Types.ObjectId | undefined> {
     const payload: JwtPayload | string = jwt.verify(
       authToken,
       process.env.JWT_SECRET as string,
@@ -122,25 +125,20 @@ class TokenService {
     if (payload.hasOwnProperty("type")) {
       const payloadData = payload as IPayload;
 
-      if (payloadData.type === token.REFRESH_TOKEN) {
+      if (payloadData.type === tokenType && tokenType === token.REFRESH_TOKEN) {
         const token = await Token.findOne({
           reset_token: authToken,
-        }).exec();
+        });
 
         return token?.user_id;
       }
 
-      if (payloadData.type === token.ACCESS_TOKEN) {
-        const user_id = await redisClient.get(
-          JSON.stringify(payloadData.accountId),
-        );
-        return user_id;
-      }
+      const user_id = await redisClient.get(authToken);
+      return user_id ? JSON.parse(user_id) : undefined;
     } else {
       logger.log("debug", payload);
       throw new BadRequestError(payload as string);
     }
-    return null;
   }
 }
 

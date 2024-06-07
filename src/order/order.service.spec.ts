@@ -4,18 +4,19 @@ import orderService, { OrderService } from "./order.service";
 import Product, { ProductDoc, IProduct } from "../product/product.schema";
 import { ProductService } from "../product/product.service";
 import ProductLine, {
+  IProductLine,
   ProductLineDoc,
 } from "../product-line/product.line.schema";
-import Order, { OrderDoc } from "./order-schema";
+import Order, { OrderDoc } from "./order.schema";
 import OrderDto from "./order.dto";
 
 jest.mock("../product/product.schema");
 jest.mock("../product-line/product.line.schema");
-jest.mock("./order-schema");
+jest.mock("./order.schema");
 
 describe("ProductService", () => {
   let mockProduct: Partial<ProductDoc>;
-  let mockProductLine: Partial<ProductLineDoc>;
+  let mockProductLine: IProductLine;
   let mockOrder: OrderDto;
 
   beforeEach(() => {
@@ -35,7 +36,7 @@ describe("ProductService", () => {
 
     mockOrder = {
       productLine: [mockProductLine],
-      userId: new Types.ObjectId("6660b04c5c57ecff6626ba55"),
+      userId: "6660b04c5c57ecff6626ba55",
     };
 
     jest.mock("../product/product.schema", () => {

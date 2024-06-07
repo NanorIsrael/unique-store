@@ -5,6 +5,6 @@ const user = express();
 
 user.post("/register", userController.findAndCreateUser);
 user.post("/login", userController.userLogin);
-user.get("/token", userController.resetToken);
+user.post("/token", userController.resetToken);
 
 export default user;

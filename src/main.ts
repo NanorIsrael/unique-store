@@ -4,6 +4,7 @@ import morgan from "morgan";
 import indexRouter from "./routes/index";
 import userRouter from "./routes/user";
 import productRouter from "./routes/product";
+import orderRouter from "./routes/order";
 import { errorHandler } from "./common/middlewares/errors";
 import NotFoundError from "./common/error-handlers/notfound";
 
@@ -16,6 +17,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/", indexRouter);
 app.use("/users", userRouter);
 app.use("/products", productRouter);
+app.use("/orders", orderRouter);
 
 app.get("*", () => {
   throw new NotFoundError();

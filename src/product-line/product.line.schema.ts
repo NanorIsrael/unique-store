@@ -1,5 +1,5 @@
 // models/User.js
-import mongoose, { Types } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 
 export interface IProductLine {
   quantity: number;
@@ -15,11 +15,11 @@ const productLineSchema = new mongoose.Schema({
   quatity: Number,
   order_id: {
     ref: "Order",
-    type: Types.ObjectId,
+    type: Schema.Types.ObjectId,
   },
   product_id: {
     ref: "Product",
-    type: Types.ObjectId,
+    type: Schema.Types.ObjectId,
     required: true,
   },
   created_at: {

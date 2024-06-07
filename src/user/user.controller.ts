@@ -5,7 +5,7 @@ import { CreateUserDto, LoginUserDto } from "./user.dto";
 import UserService, { IUserService } from "./user.service";
 import { Types } from "mongoose";
 
-import TokenService from "../auth/auth-token-service";
+import TokenService, { token } from "../auth/auth-token-service";
 import { getAuthHeader } from "../common/auth";
 import BadRequestError from "../common/error-handlers/badrequest";
 import RequestValidationError from "../common/error-handlers/validation";
@@ -96,17 +96,19 @@ class UserController {
       }
 
       const tokenService = new TokenService();
-      const userId = await tokenService.verifyToken(refreshToken);
+      const userId = await tokenService.verifyToken(
+        refreshToken,
+        token.REFRESH_TOKEN,
+      );
       if (!userId) {
         throw new BadRequestError("refresh token invalid");
       }
-      const objId = new Types.ObjectId(userId);
       const ownerId = await redisClient.get(expiredAccessToken);
       if (!ownerId) {
         throw new BadRequestError("access token is invalid.");
       }
       await redisClient.del(expiredAccessToken);
-      const newTokens = await tokenService.createTokens(objId);
+      const newTokens = await tokenService.createTokens(userId);
       return res.status(200).json(newTokens);
     } catch (error) {
       console.log(error);
