@@ -4,9 +4,7 @@ import orderService, { OrderService } from "./order.service";
 import OrderDto from "./order.dto";
 import { validate } from "class-validator";
 import RequestValidationError from "../common/error-handlers/validation";
-import { Types } from "mongoose";
 import BadRequestError from "../common/error-handlers/badrequest";
-import productService from "../product/product.service";
 
 export default class OrderController {
   static async createOrder(req: Request, res: Response, next: NextFunction) {
@@ -64,6 +62,41 @@ export default class OrderController {
       }
 
       const orders = await orderService.getAllOrdersPagination(page, limit);
+      res.status(200).json(orders);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getUserOrderPaginated(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const { id } = req.params;
+      const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
+      const limit = req.query.limit
+        ? parseInt(req.query.limit as string, 10)
+        : 10;
+
+      if (!id) {
+        throw new BadRequestError("user id required.");
+      }
+
+      if (isNaN(page) || page < 1) {
+        throw new BadRequestError("invalid 'page' query parameter");
+      }
+
+      if (isNaN(limit) || limit < 1) {
+        throw new BadRequestError("invalid 'limit' query parameter");
+      }
+
+      const orders = await orderService.getAllOrdersByUserPagination(
+        page,
+        limit,
+        id,
+      );
       res.status(200).json(orders);
     } catch (error) {
       next(error);

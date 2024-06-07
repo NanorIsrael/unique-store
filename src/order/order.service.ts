@@ -64,5 +64,17 @@ export class OrderService {
     const data = await Order.find().skip(skip).limit(limit);
     return { page, limit, total, pages, data };
   }
+
+  async getAllOrdersByUserPagination(
+    page: number,
+    limit: number,
+    userId: Types.ObjectId | string,
+  ) {
+    const skip = (page - 1) * limit;
+    const total = await Order.countDocuments();
+    const pages = Math.ceil(total / limit);
+    const data = await Order.find({ user_id: userId }).skip(skip).limit(limit);
+    return { page, limit, total, pages, data };
+  }
 }
 export default new OrderService();
