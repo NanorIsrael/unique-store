@@ -13,6 +13,12 @@ export class OrderService {
   async createOrder(orderDto: OrderDto) {
     const productLine = orderDto.productLine;
 
+    const order = new Order({
+      user_id: orderDto.userId,
+      products: [],
+    });
+    const savedOrder = await order.save();
+
     const productLineDocs = await Promise.all(
       productLine.map(async (line) => {
         const product = await Product.findById(line.productId);
@@ -25,18 +31,24 @@ export class OrderService {
         return new ProductLine({
           product_id: line.productId,
           quantity: line.quantity,
+          order_id: savedOrder._id,
         });
       }),
     );
 
     await ProductLine.insertMany(productLineDocs);
 
-    const order = new Order({
-      user_id: orderDto.userId,
-      products: productLineDocs.map((line) => line._id),
-    });
+    savedOrder.products = productLineDocs.map((line) => line._id);
 
-    return await order.save();
+    return await savedOrder.save();
+  }
+
+  async getAllOrdersByPagination(page: number, limit: number) {
+    const skip = (page - 1) * limit;
+    const total = await Order.countDocuments();
+    const pages = Math.ceil(total / limit);
+    const data = await Order.find({}).skip(skip).limit(limit);
+    return { page, limit, total, pages, data };
   }
 }
 export default new OrderService();

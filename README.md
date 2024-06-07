@@ -163,3 +163,96 @@ npm run test
 				},
 			}
 			```
+
+
+
+## Product API Documentation
+#### Get all products
+- /products:
+	* method: `get`
+	* authentication: `not required`
+	* body: `blank`
+	* route params: `none`
+	* example:
+		- request:  
+			`curl -X GET "localhost:8000/products" -H "Content-type: application/json"`
+
+		- response: 
+			```javascript 
+			{
+				"page": 1,
+				"limit": 10,
+				"total": 2,
+				"pages": 1,
+				"data": [
+					{
+						"_id": "666263892789061b37756b19",
+						"stock": 5,
+						"price": 99.90,
+						"created_at": "2024-06-07T01:34:01.271Z",
+						"__v": 0
+					},
+					{
+						"_id": "666263892789061b37756b20",
+						"stock": 25,
+						"price": 99.90,
+						"created_at": "2024-06-07T01:34:01.271Z",
+						"__v": 0
+					}
+				]
+			}
+			```
+
+#### Get a product by id
+- /products/:id:
+	* method: `get`
+	* authentication: `required`
+	* body: `blank`
+	* route params: `product id`
+	* example:
+		- request:  
+			`curl -X GET "localhost:8000/products/666263892789061b37756b19" -H "Content-type: application/json"`
+
+		- response: 
+			```javascript 
+			{
+				{
+					"_id": "666263892789061b37756b19",
+					"stock": 5,
+					"price": 99.90,
+					"created_at": "2024-06-07T01:34:01.271Z",
+					"__v": 0
+			},
+			}
+			```
+
+## Orders API Documentation
+#### Get all orders
+- /orders:
+	* method: `get`
+	* authentication: `required`
+	* body: `blank`
+	* route params: `none`
+	* example:
+		- request:  
+			`curl -X GET "localhost:8000/orders" -H "Content-type: application/json"`
+
+		- response: 
+			```javascript 
+			{
+				"page": 1,
+				"limit": 10,
+				"total": 2,
+				"pages": 1,
+				"data": [
+					{
+						products: [ '66631fff03f63e85d2e4636b' ],
+						user_id: '66631fff03f63e85d2e46355',
+						_id: '66631fff03f63e85d2e46366',
+						created_at: '2024-06-07T14:58:07.708Z',
+						updated_at: '2024-06-07T14:58:07.708Z',
+						__v: 1
+					}
+				]
+			}
+			```

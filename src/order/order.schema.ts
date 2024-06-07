@@ -1,10 +1,9 @@
 // models/User.js
-import mongoose, { Schema } from "mongoose";
-import { IProductLine } from "../product-line/product.line.schema";
+import mongoose, { Schema, Types } from "mongoose";
 
 export interface IOrder {
-  products: IProductLine[];
-  user_id: Schema.Types.ObjectId;
+  products: Types.ObjectId[];
+  user_id: Types.ObjectId;
 }
 
 export interface OrderDoc extends IOrder, Document {

@@ -4,7 +4,7 @@ import { verifyUser } from "../common/auth";
 
 const user = express();
 
-user.get("/", userController.getAllUsersByPagination);
+user.get("/", verifyUser, userController.getAllUsersByPagination);
 user.get("/:id", verifyUser, userController.getUserByID);
 user.delete("/", verifyUser, userController.deletUser);
 user.post("/register", userController.findAndCreateUser);

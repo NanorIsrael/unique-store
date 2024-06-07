@@ -3,7 +3,7 @@ import { Types } from "mongoose";
 import OrderDto from "./order.dto";
 import { IProduct } from "../product/product.schema";
 
-describe.skip("order controller ", () => {
+describe("order controller ", () => {
   const baseUrl: string = process.env.SERVER_URL as string;
   let newProduct: IProduct;
   let newOrder: Partial<OrderDto>;
@@ -11,9 +11,9 @@ describe.skip("order controller ", () => {
 
   beforeAll(async () => {
     const testUser = {
-      email: `testuser@gmil.com`,
+      email: `testuser2@gmil.com`,
       password: "tesA@123",
-      name: "testUser",
+      name: "testUser2",
     };
     try {
       await request(
@@ -23,23 +23,18 @@ describe.skip("order controller ", () => {
       );
 
       const res = await request(
-        options(
-          baseUrl + "/users/login",
-          "POST",
-          { data: null },
-          {
-            authorization: `Basic ${btoa(`${testUser.email}:${testUser.password}`)}`,
-          },
-        ),
+        options(baseUrl + "/users/login", "POST", null, {
+          authorization: `Basic ${btoa(`${testUser.email}:${testUser.password}`)}`,
+        }),
       );
       const results = res.data;
       accessToken = results["accessToken"];
+      console.log(accessToken);
     } catch (error) {
       console.log(extractAxiosError(error).data);
     }
-
-    console.log(accessToken);
   });
+
   beforeEach(() => {
     newProduct = {
       name: "test product",
@@ -57,7 +52,19 @@ describe.skip("order controller ", () => {
     };
   });
 
-  it("should find a product by id", async () => {
+  afterAll(async () => {
+    try {
+      await request(
+        options(baseUrl + `/users`, "DELETE", null, {
+          authorization: `JWT ${accessToken}`,
+        }),
+      );
+    } catch (error) {
+      extractAxiosError(error);
+    }
+  });
+
+  it("should create order", async () => {
     const res = await request(
       options(baseUrl + "/products", "POST", { data: newProduct }),
     );
@@ -76,18 +83,18 @@ describe.skip("order controller ", () => {
       productLine: [{ productId: savedProduct._id, quantity: 10 }],
     };
 
-    // const savedOrder = await request(
-    //   options(
-    //     baseUrl + "/orders",
-    //     "POST",
-    //     { data: newOrder },
-    //     { authorization: `JWT ${accessToken}` },
-    //   ),
-    // );
-    // const savedOrderResult = savedOrder.data;
-    // console.log(savedOrderResult);
+    const savedOrder = await request(
+      options(
+        baseUrl + "/orders",
+        "POST",
+        { data: newOrder },
+        { authorization: `JWT ${accessToken}` },
+      ),
+    );
+    const savedOrderResult = savedOrder.data;
+    console.log(savedOrderResult);
 
-    // expect(savedOrderResult).toHaveProperty("_id");
+    expect(savedOrderResult).toHaveProperty("_id");
   });
 });
 

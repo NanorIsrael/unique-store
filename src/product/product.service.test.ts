@@ -34,7 +34,7 @@ describe("ProductService", () => {
     expect(dataSource.getDBConection).toHaveBeenCalled();
   });
 
-  describe.skip("createProduct", () => {
+  describe("createProduct", () => {
     it("should create and save a new product", async () => {
       const mockSave = jest.fn().mockResolvedValue("new product");
       (Product as any).mockImplementation(() => ({

@@ -31,7 +31,6 @@ describe("UserService", () => {
     await service.createUser(testUser as IUser);
 
     const result = await service.getAllUsers(1, 10);
-    console.log(result);
 
     expect(result).toBeDefined();
     expect(result.data.length).toBeGreaterThan(0);
