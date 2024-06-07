@@ -1,16 +1,19 @@
 import { IsArray, IsNotEmpty, IsString } from "class-validator";
-import { IProductLine } from "../product-line/product.line.schema";
+import { Types } from "mongoose";
 
 class OrderDto {
   @IsArray()
   @IsNotEmpty()
-  readonly productLine: IProductLine[];
+  readonly productLine: { quantity: number; productId: Types.ObjectId }[];
 
   @IsString()
   @IsNotEmpty()
   readonly userId: string;
 
-  constructor(productLine: IProductLine[], userId: string) {
+  constructor(
+    productLine: { quantity: number; productId: Types.ObjectId }[],
+    userId: string,
+  ) {
     this.productLine = productLine;
     this.userId = userId;
   }

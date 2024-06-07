@@ -76,5 +76,19 @@ export class OrderService {
     const data = await Order.find({ user_id: userId }).skip(skip).limit(limit);
     return { page, limit, total, pages, data };
   }
+
+  async getOrderProducts(orderId: Types.ObjectId | string) {
+    const order = await Order.findById(orderId);
+    if (!order) {
+      throw new BadRequestError(`order with id: ${orderId} does not exist.`);
+    }
+    const products = order.products.map(async (id) => {
+      const productLine = await ProductLine.findById(id);
+      return await Product.findById(productLine?.product_id);
+    });
+
+    const results = await Promise.all(products);
+    return results;
+  }
 }
 export default new OrderService();

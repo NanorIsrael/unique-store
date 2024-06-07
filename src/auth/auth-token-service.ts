@@ -125,12 +125,14 @@ class TokenService {
     if (payload.hasOwnProperty("type")) {
       const payloadData = payload as IPayload;
 
-      if (payloadData.type === tokenType && tokenType === token.REFRESH_TOKEN) {
-        const token = await Token.findOne({
-          reset_token: authToken,
-        });
-
-        return token?.user_id;
+      if (tokenType === token.REFRESH_TOKEN) {
+        if (payloadData.type !== token.REFRESH_TOKEN) {
+          const token = await Token.findOne({
+            reset_token: authToken,
+          });
+          return token?.user_id;
+        }
+        return undefined;
       }
 
       const user_id = await redisClient.get(authToken);

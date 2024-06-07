@@ -279,3 +279,69 @@ npm run test
 				"__v": 1
 			}
 			```
+
+#### Get all orders for a specific user
+- /orders/user/:id:
+	* method: `get`
+	* authentication: `required`
+	* body: `blank`
+	* route params: `user id`
+	* example:
+		- request:  
+			`curl -X GET "localhost:8000/orders/user/66632ef4f8607d85c5076835" -H "Content-type: application/json"`
+
+		- response: 
+			```javascript 
+				{
+					"page": 1,
+					"limit": 10,
+					"total": 17,
+					"pages": 2,
+					"data": [
+						{
+							"_id": "66632f09f8607d85c507683b",
+							"products": [
+								"66632f09f8607d85c507683e"
+							],
+							"user_id": "66632ef4f8607d85c5076835",
+							"created_at": "2024-06-07T16:02:17.886Z",
+							"updated_at": "2024-06-07T16:02:17.886Z",
+							"__v": 1
+						},
+						{
+							"_id": "6663365c2ddeb9446a712659",
+							"products": [
+								"6663365c2ddeb9446a71265c"
+							],
+							"user_id": "66632ef4f8607d85c5076835",
+							"created_at": "2024-06-07T16:33:32.830Z",
+							"updated_at": "2024-06-07T16:33:32.830Z",
+							"__v": 1
+						}
+					]
+			}
+			```
+
+#### Get all products for a specific order
+- /orders/user/:id:
+	* method: `get`
+	* authentication: `required`
+	* body: `blank`
+	* route params: `order id`
+	* example:
+		- request:  
+			`curl -X GET "localhost:8000/orders/66632ef4f8607d85c5076835/products" -H "Content-type: application/json"`
+
+		- response: 
+			```javascript 
+			[
+				{
+					"_id": "66632e01a5e2c70a79e51886",
+					"name": "test product",
+					"stock": 5,
+					"price": 90.99,
+					"createdAt": "2024-06-07T15:57:53.147Z",
+					"__v": 0
+				}
+			]
+			```

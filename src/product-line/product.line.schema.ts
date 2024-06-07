@@ -3,12 +3,12 @@ import mongoose, { Schema, Types } from "mongoose";
 
 export interface IProductLine {
   quantity: number;
-  productId: Types.ObjectId;
+  product_id: Types.ObjectId;
+  order_id: Types.ObjectId;
 }
 
 export interface ProductLineDoc extends IProductLine, Document {
   _id: Types.ObjectId;
-  order_id: Types.ObjectId;
 }
 
 const productLineSchema = new mongoose.Schema({

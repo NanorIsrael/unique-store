@@ -43,6 +43,25 @@ export default class OrderController {
     }
   }
 
+  static async getOrderProducts(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const id = req.params["id"];
+      if (!id) {
+        throw new BadRequestError("order id required");
+      }
+
+      const products = await orderService.getOrderProducts(id);
+      res.status(200).json(products);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+
   static async getOrderPaginated(
     req: Request,
     res: Response,

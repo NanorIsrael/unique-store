@@ -27,12 +27,18 @@ describe("ProductService", () => {
     };
 
     mockProductLine = {
-      productId: new Types.ObjectId("6660b04c5c57ecff6626ba55"),
+      product_id: new Types.ObjectId("6660b04c5c57ecff6626ba55"),
       quantity: 5,
+      order_id: new Types.ObjectId("6660b04c5c57ecff6626ba55"),
     };
 
     mockOrder = {
-      productLine: [mockProductLine],
+      productLine: [
+        {
+          productId: mockProductLine.product_id,
+          quantity: mockProductLine.quantity,
+        },
+      ],
       userId: "6660b04c5c57ecff6626ba55",
     };
 
@@ -53,7 +59,7 @@ describe("ProductService", () => {
     expect(dataSource.getDBConection).toHaveBeenCalled();
   });
 
-  describe.skip("createOrder", () => {
+  describe("createOrder", () => {
     it("should create and save an order", async () => {
       (Product as any).findById.mockResolvedValue(mockProduct);
       const mockSave = jest.fn().mockResolvedValue("new product");
@@ -73,18 +79,16 @@ describe("ProductService", () => {
       const mockOrderSave = jest.fn().mockResolvedValue({
         _id: "new order id",
         products: ["new productLine"],
+        save: jest.fn(),
       });
       (Order.prototype.save as any) = mockOrderSave;
-      mockOrderSave.prototype.save = jest.fn();
 
+      (Order.create as any).mockResolvedValue(mockOrder);
       const orderService = new OrderService();
       const orderResult = await orderService.createOrder(mockOrder);
       expect(mockInsertMany).toHaveBeenCalled();
       expect(mockOrderSave).toHaveBeenCalled();
-      expect(orderResult).toBe({
-        _id: "new order id",
-        products: ["new productLine"],
-      });
+      expect(orderResult._id).toEqual("new order id");
     });
   });
 
@@ -108,6 +112,9 @@ describe("ProductService", () => {
       limit: jest.fn().mockResolvedValue(mockOrders),
     });
 
+    // Mock Order.create to return the mock order object
+    (Order.create as any).mockResolvedValue(mockOrder);
+
     const orderService = new OrderService();
     const data = await orderService.getAllOrdersByPagination(1, 2);
 
@@ -119,5 +126,30 @@ describe("ProductService", () => {
       pages: 5,
       data: mockOrders,
     });
+  });
+
+  it("should get products for a specific order", async () => {
+    Order.findById = jest.fn().mockReturnValue({
+      _id: "orderId2",
+      products: ["1"],
+      user: "test user",
+    });
+    ProductLine.findById = jest.fn().mockReturnValue({
+      product_id: "1",
+    });
+
+    Product.findById = jest.fn().mockReturnValue({
+      _id: "1",
+    });
+
+    // Mock Order.create to return the mock order object
+    // (Order.create as any).mockResolvedValue(mockOrder);
+
+    const orderService = new OrderService();
+    const data = await orderService.getOrderProducts("mockOrder 1");
+
+    expect(Order.findById).toHaveBeenCalledWith("mockOrder 1");
+    expect(Product.findById).toHaveBeenCalledWith("1");
+    expect(data).toEqual([{ _id: "1" }]);
   });
 });

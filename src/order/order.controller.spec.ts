@@ -29,7 +29,6 @@ describe("order controller ", () => {
       );
       const results = res.data;
       accessToken = results["accessToken"];
-      console.log(accessToken);
     } catch (error) {
       console.log(extractAxiosError(error).data);
     }
@@ -183,8 +182,8 @@ describe("order controller ", () => {
 
     const searchedOrderDoc = searchedOrder.data;
 
-    expect(searchedOrderDoc).toBeInstanceOf(Array);
-    expect(searchedOrderDoc.length).toBeGreaterThan(0);
+    expect(searchedOrderDoc).toBeInstanceOf(Object);
+    expect(searchedOrderDoc.data.length).toBeGreaterThan(0);
   });
 });
 

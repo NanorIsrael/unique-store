@@ -157,7 +157,7 @@ class UserController {
         token.REFRESH_TOKEN,
       );
       if (!userId) {
-        throw new BadRequestError("refresh token invalid");
+        throw new BadRequestError("invalid refresh token");
       }
       const ownerId = await redisClient.get(expiredAccessToken);
       if (!ownerId) {
