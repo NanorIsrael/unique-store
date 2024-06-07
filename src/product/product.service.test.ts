@@ -89,6 +89,25 @@ describe("ProductService", () => {
     });
   });
 
+  describe("updateProduct", () => {
+    it("should return all products", async () => {
+      const mockProducts = { name: "product1" };
+
+      (Product as any).findByIdAndUpdate.mockResolvedValue({
+        name: "updated product name",
+      });
+
+      const productService = new ProductService();
+      const result = await productService.updateProduct();
+
+      expect(Product.findByIdAndUpdate).toHaveBeenCalledWith(
+        "8098",
+        mockProducts,
+      );
+      expect(result.name).toEqual("updated product name");
+    });
+  });
+
   describe("getProductByPagination", () => {
     it("should return paginated products", async () => {
       const mockProducts = [{ name: "product1" }, { name: "product2" }];

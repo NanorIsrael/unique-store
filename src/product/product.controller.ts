@@ -32,6 +32,32 @@ class ProductController {
     }
   }
 
+  static async updateProductById(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const id = req.params["id"];
+      const { name, stock, price } = req.body;
+
+      if (!id) {
+        throw new BadRequestError("product id required");
+      }
+
+      const productDto = new ProductDto(name, stock, price);
+      const errors = await validate(productDto);
+      if (errors.length > 0) {
+        throw new RequestValidationError(errors);
+      }
+      const product = await productService.updateProduct(id, productDto);
+      res.status(200).json(product);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+
   static async createProduct(req: Request, res: Response, next: NextFunction) {
     try {
       const { name, stock, price } = req.body;

@@ -19,11 +19,10 @@ export async function verifyUser(
 ) {
   try {
     const jwt = getAuthHeader(req.headers);
-    const tokenService = new TokenService();
     if (!jwt) {
       throw new BadRequestError("access token not found.");
     }
-
+    const tokenService = new TokenService();
     const userId = await tokenService.verifyToken(jwt);
     if (!userId) {
       throw new NotAuthorisedError();

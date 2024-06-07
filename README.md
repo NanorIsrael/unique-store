@@ -214,6 +214,33 @@ npm run test
 
 
 ## Product API Documentation
+#### Create new product
+- /products:
+	* method: `post`
+	* authentication: `required`
+	* body:
+	```javascript
+		{
+			name: "coke";
+			stock: 6;
+			price: 2.80;
+		}
+	````
+	* route params: `none`
+	* example:
+		- request:  
+			`curl -X POST "localhost:8000/products" -H "Content-type: application/json" -d '{"name": "coke", "stock": 6, "price": 2.00}' -H "authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOiI2NjYzMmVmNGY4NjA3ZDg1YzUwNzY4MzUiLCJpYXQiOjE3MTc3ODYzOTEuNTI2LCJleHAiOjE3MTc3ODY2OTEuNTEzLCJ0eXBlIjoiYWNjZXNzX3Rva2VuIn0.RD7HS6xREhtTUpb-zj4oKkQ1D8hnr_HR09RopKY6knc"  `
+
+		- response: 
+			```javascript 
+			{
+				"name":"coke",
+				"stock":6,
+				"price":2,
+				"_id":"666372e055664f6a0a45cb4c",
+				"createdAt":"2024-06-07T20:51:44.298Z","__v":0
+			}
+			```
 #### Get all products
 - /products:
 	* method: `get`
@@ -268,6 +295,28 @@ npm run test
 				"stock": 5,
 				"price": 99.90,
 				"created_at": "2024-06-07T01:34:01.271Z",
+				"__v": 0
+			}
+			```
+
+#### Update a product
+- /products/:id:
+	* method: `put`
+	* authentication: `required`
+	* body: `blank`
+	* route params: `product id`
+	* example:
+		- request:  
+			`curl -X POST "localhost:8000/products/66632e01a5e2c70a79e51886" -H "Content-type: application/json" -d '{"name": "coke", "stock": 6, "price": 2.00}' -H "authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOiI2NjYzMmVmNGY4NjA3ZDg1YzUwNzY4MzUiLCJpYXQiOjE3MTc3ODYzOTEuNTI2LCJleHAiOjE3MTc3ODY2OTEuNTEzLCJ0eXBlIjoiYWNjZXNzX3Rva2VuIn0.RD7HS6xREhtTUpb-zj4oKkQ1D8hnr_HR09RopKY6knc" `
+
+		- response: 
+			```javascript 
+			{
+				"_id": "66632e01a5e2c70a79e51886",
+				"name": "updated product",
+				"stock": 5,
+				"price": 90.99,
+				"createdAt": "2024-06-07T15:57:53.147Z",
 				"__v": 0
 			}
 			```

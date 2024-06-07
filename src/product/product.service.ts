@@ -24,6 +24,13 @@ export class ProductService {
     return product;
   }
 
+  async updateProduct(productId: string, product: Partial<ProductDto>) {
+    const updatedProduct = await Product.findByIdAndUpdate(productId, product, {
+      new: true,
+    });
+    return updatedProduct;
+  }
+
   async getProductByPagination(page: number, limit: number) {
     const skip = (page - 1) * limit;
     const total = await Product.countDocuments();
