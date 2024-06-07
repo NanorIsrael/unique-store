@@ -12,6 +12,7 @@ describe("UserService", () => {
       email: "george.bluth@reqres.in",
       name: "George",
       password: "Bluth@360",
+      created_at: new Date(),
     };
   });
 
@@ -30,7 +31,27 @@ describe("UserService", () => {
     await service.createUser(testUser as IUser);
 
     const result = await service.getAllUsers(1, 10);
+    console.log(result);
+
     expect(result).toBeDefined();
     expect(result.data.length).toBeGreaterThan(0);
+  });
+
+  it("should find user by id", async () => {
+    const user = await service.createUser(testUser as IUser);
+
+    const result = await service.findUserByIdOrEmail({ userId: user._id });
+    expect(result).toBeDefined();
+    expect(result).toHaveProperty("_id");
+    expect(result?._id).toEqual(user._id);
+  });
+
+  it("should delet user by id", async () => {
+    const user = await service.createUser(testUser as IUser);
+
+    const result = await service.deletUserById(user._id);
+    expect(result).toBeDefined();
+    expect(result).toHaveProperty("_id");
+    expect(result?._id).toEqual(user._id);
   });
 });

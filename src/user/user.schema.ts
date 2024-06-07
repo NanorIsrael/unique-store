@@ -6,6 +6,7 @@ export interface IUser {
   name: string;
   email: string;
   password: string;
+  created_at: Date;
 }
 
 export interface UserDoc extends IUser, Document {

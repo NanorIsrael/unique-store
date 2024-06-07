@@ -1,10 +1,20 @@
+import { Types } from "mongoose";
 import dataSource from "../utils";
 import { CreateUserDto } from "./user.dto";
-import User, { IUser, UserDoc } from "./user.schema";
+import User, { UserDoc } from "./user.schema";
+
+export interface SecuredUser {
+  _id: Types.ObjectId;
+  name: string;
+  email: string;
+  createdAt: Date;
+}
 
 export interface IUserService {
   createUser(user: CreateUserDto): Promise<UserDoc>;
-  findUserByIdOrEmail(data: { [key: string]: string }): Promise<IUser | null>;
+  findUserByIdOrEmail(data: {
+    [key: string]: string | Types.ObjectId;
+  }): Promise<UserDoc | null>;
   getAllUsers(
     page: number,
     limit: number,
@@ -13,11 +23,12 @@ export interface IUserService {
     limit: number;
     total: number;
     pages: number;
-    data: UserDoc[];
+    data: SecuredUser[];
   }>;
+  deletUserById(userId: string | Types.ObjectId): Promise<UserDoc | null>;
 }
 
-export default class UserService {
+export default class UserService implements IUserService {
   constructor() {
     dataSource.getDBConection();
   }
@@ -45,13 +56,25 @@ export default class UserService {
     limit: number;
     total: number;
     pages: number;
-    data: UserDoc[];
+    data: SecuredUser[];
   }> {
     const skip = (page - 1) * limit;
     const total = await User.countDocuments();
     const pages = Math.ceil(total / limit);
-    const data = await User.find().skip(skip).limit(limit);
+    const users = await User.find().skip(skip).limit(limit);
+    const data = users.map((obj) => ({
+      _id: obj._id,
+      name: obj.name,
+      email: obj.email,
+      createdAt: obj.created_at,
+    }));
     return { page, limit, total, pages, data };
+  }
+
+  async deletUserById(
+    userId: string | Types.ObjectId,
+  ): Promise<UserDoc | null> {
+    return await User.findByIdAndDelete({ _id: userId });
   }
 }
 export const userService = new UserService();

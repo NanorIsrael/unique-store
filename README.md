@@ -128,7 +128,6 @@ npm run test
 						"_id": "666263892789061b37756b19",
 						"name": "testUser",
 						"email": "testuser@gmil.com",
-						"password": "$2a$09$cXlJPaKOFW0RkJqHoH1NNexEwPa3mXb8uu8ndClEXtz0ImyaEn8Um",
 						"created_at": "2024-06-07T01:34:01.271Z",
 						"__v": 0
 					},
@@ -136,10 +135,31 @@ npm run test
 						"_id": "666264622789061b37756b26",
 						"name": "carpenter",
 						"email": "testuser1@gmil.com",
-						"password": "$2a$09$B4ohAt5.QzeE8lc4SkMVpudvE06SvPf9JJ04Oy0DP39YaKing2b6G",
 						"created_at": "2024-06-07T01:37:38.525Z",
 						"__v": 0
 					}
 				]
+			}
+			```
+#### Get a user by id
+- /users/:id:
+	* method: `get`
+	* authentication: `required`
+	* body: `blank`
+	* route params: `user id`
+	* example:
+		- request:  
+			`curl -X GET "localhost:8000/users/6662f0a10169005292883001" -H "Content-type: application/json"`
+
+		- response: 
+			```javascript 
+			{
+				{
+					"_id": "6662f0a10169005292883001",
+					"name": "testUser",
+					"email": "testuser@gmil.com",
+					"created_at": "2024-06-07T01:34:01.271Z",
+					"__v": 0
+				},
 			}
 			```

@@ -39,6 +39,7 @@ class UserController {
       next(err);
     }
   }
+
   static async getAllUsersByPagination(
     req: Request,
     res: Response,
@@ -59,6 +60,39 @@ class UserController {
 
       const users = await userService.getAllUsers(page, limit);
       res.status(200).json(users);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async getUserByID(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { userId } = req.params;
+
+      if (!userId) {
+        throw new BadRequestError("Invalid 'user id' parameter");
+      }
+
+      const user = await userService.findUserByIdOrEmail({ userId });
+      res.status(200).json(user);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async deletUser(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { userId } = req.body;
+
+      if (!userId) {
+        throw new BadRequestError("invalid 'user id' parameter");
+      }
+
+      const user = await userService.deletUserById(userId);
+      if (!user) {
+        throw new BadRequestError(`user with id: ${userId} does not exist.`);
+      }
+      res.status(200).json(user);
     } catch (err) {
       next(err);
     }
@@ -101,8 +135,6 @@ class UserController {
         }
       }
     } catch (error) {
-      console.log("=============>", error);
-
       next(error);
     }
   }
