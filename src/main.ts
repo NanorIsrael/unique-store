@@ -5,6 +5,7 @@ import indexRouter from "./routes/index";
 import userRouter from "./routes/user";
 import productRouter from "./routes/product";
 import orderRouter from "./routes/order";
+import productLineRouter from "./routes/product-line";
 import { errorHandler } from "./common/middlewares/errors";
 import NotFoundError from "./common/error-handlers/notfound";
 
@@ -18,6 +19,7 @@ app.use("/", indexRouter);
 app.use("/users", userRouter);
 app.use("/products", productRouter);
 app.use("/orders", orderRouter);
+app.use("/line", productLineRouter);
 
 app.get("*", () => {
   throw new NotFoundError();

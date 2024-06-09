@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 import orderService, { OrderService } from "./order.service";
-import OrderDto from "./order.dto";
+import OrderDto, { UpdateOrderDto } from "./order.dto";
 import { validate } from "class-validator";
 import RequestValidationError from "../common/error-handlers/validation";
 import BadRequestError from "../common/error-handlers/badrequest";
@@ -36,6 +36,31 @@ export default class OrderController {
 
       const objectId = id;
       const order = await orderService.findOrderById(objectId);
+      res.status(200).json(order);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+
+  static async updateOrder(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = req.params["id"];
+      if (!id) {
+        throw new BadRequestError("order id required");
+      }
+
+      const { userId, productLine } = req.body;
+
+      const orderDto = new UpdateOrderDto(productLine, userId);
+      const errors = await validate(orderDto);
+      if (errors.length > 0) {
+        throw new RequestValidationError(errors);
+      }
+
+      const orderService = new OrderService();
+      const order = await orderService.updateOrder(id, orderDto);
+
       res.status(200).json(order);
     } catch (error) {
       console.log(error);

@@ -12,7 +12,6 @@ export interface ProductLineDoc extends IProductLine, Document {
 }
 
 const productLineSchema = new mongoose.Schema({
-  quatity: Number,
   order_id: {
     ref: "Order",
     type: Schema.Types.ObjectId,
@@ -20,6 +19,10 @@ const productLineSchema = new mongoose.Schema({
   product_id: {
     ref: "Product",
     type: Schema.Types.ObjectId,
+    required: true,
+  },
+  quantity: {
+    type: Number,
     required: true,
   },
   created_at: {

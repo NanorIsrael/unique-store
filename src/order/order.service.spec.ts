@@ -5,7 +5,7 @@ import Product, { ProductDoc, IProduct } from "../product/product.schema";
 import { ProductService } from "../product/product.service";
 import ProductLine, { IProductLine } from "../product-line/product.line.schema";
 import Order from "./order.schema";
-import OrderDto from "./order.dto";
+import OrderDto, { UpdateOrderDto } from "./order.dto";
 
 jest.mock("../product/product.schema");
 jest.mock("../product-line/product.line.schema");
@@ -90,6 +90,111 @@ describe("ProductService", () => {
       expect(mockOrderSave).toHaveBeenCalled();
       expect(orderResult._id).toEqual("new order id");
     });
+
+    describe("updateOrder", () => {
+      const orderId: string = new Types.ObjectId().toString();
+      const productId1: Types.ObjectId = new Types.ObjectId();
+      const productId2: Types.ObjectId = new Types.ObjectId();
+      const productLineId1: Types.ObjectId = new Types.ObjectId();
+      const productLineId2: Types.ObjectId = new Types.ObjectId();
+      const userId: string = new Types.ObjectId().toString();
+
+      const mockOrder = {
+        _id: orderId,
+        products: [productLineId1, productLineId2],
+        save: jest.fn(),
+      };
+
+      const mockProduct1 = { _id: productId1 };
+      const mockProduct2 = { _id: productId2 };
+
+      const mockProductLine1 = {
+        _id: productLineId1,
+        quantity: 1,
+        save: jest.fn(),
+      };
+      const mockProductLine2 = {
+        _id: productLineId2,
+        quantity: 2,
+        save: jest.fn(),
+      };
+      let orderDto: UpdateOrderDto;
+
+      beforeEach(() => {
+        jest.clearAllMocks();
+        orderDto = {
+          productLine: [
+            { id: productLineId1, productId: productId1, quantity: 10 },
+            { id: productLineId2, productId: productId2, quantity: 5 },
+          ],
+          userId: userId,
+        };
+      });
+
+      it("should update the order successfully", async () => {
+        (Order.findById as jest.Mock).mockResolvedValue(mockOrder);
+        (Product.findById as jest.Mock)
+          .mockResolvedValueOnce(mockProduct1)
+          .mockResolvedValueOnce(mockProduct2);
+        (ProductLine.findById as jest.Mock)
+          .mockResolvedValueOnce(mockProductLine1)
+          .mockResolvedValueOnce(mockProductLine2);
+        (ProductLine.findByIdAndUpdate as jest.Mock)
+          .mockResolvedValueOnce(mockProductLine1)
+          .mockResolvedValueOnce(mockProductLine2);
+        (ProductLine.insertMany as jest.Mock).mockResolvedValue([
+          mockProductLine1,
+          mockProductLine2,
+        ]);
+        (ProductLine.deleteMany as jest.Mock).mockResolvedValue([
+          mockProductLine1,
+          mockProductLine2,
+        ]);
+
+        const orderService = new OrderService();
+        await orderService.updateOrder(orderId, orderDto);
+
+        expect(Order.findById).toHaveBeenCalledWith(orderId);
+        expect(Product.findById).toHaveBeenCalledWith(productId1);
+        expect(Product.findById).toHaveBeenCalledWith(productId2);
+        expect(ProductLine.findById).toHaveBeenCalledWith(productLineId1);
+        expect(ProductLine.findById).toHaveBeenCalledWith(productLineId2);
+      });
+
+      it("should throw an error if the order is not found", async () => {
+        (Order.findById as jest.Mock).mockResolvedValue(null);
+        const orderDto = { productLine: [] };
+
+        const orderService = new OrderService();
+
+        await expect(
+          orderService.updateOrder(
+            orderId,
+            orderDto as unknown as UpdateOrderDto,
+          ),
+        ).rejects.toThrow(`Order with id ${orderId} not found`);
+      });
+
+      it("should throw an error if a product is not found", async () => {
+        // Arrange
+        (Order.findById as jest.Mock).mockResolvedValue(mockOrder);
+        (Product.findById as jest.Mock)
+          .mockResolvedValueOnce(mockProduct1)
+          .mockResolvedValueOnce(null);
+
+        const orderDto = {
+          productLine: [
+            { id: productLineId1, productId: productId1, quantity: 10 },
+            { productId: productId2, quantity: 5 },
+          ],
+        };
+
+        const orderService = new OrderService();
+        await expect(
+          orderService.updateOrder(orderId, orderDto as UpdateOrderDto),
+        ).rejects.toThrow(`Product with id ${productId2} not found`);
+      });
+    });
   });
 
   it("should get all orders", async () => {
@@ -112,7 +217,6 @@ describe("ProductService", () => {
       limit: jest.fn().mockResolvedValue(mockOrders),
     });
 
-    // Mock Order.create to return the mock order object
     (Order.create as any).mockResolvedValue(mockOrder);
 
     const orderService = new OrderService();
@@ -141,9 +245,6 @@ describe("ProductService", () => {
     Product.findById = jest.fn().mockReturnValue({
       _id: "1",
     });
-
-    // Mock Order.create to return the mock order object
-    // (Order.create as any).mockResolvedValue(mockOrder);
 
     const orderService = new OrderService();
     const data = await orderService.getOrderProducts("mockOrder 1");
