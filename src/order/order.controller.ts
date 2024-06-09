@@ -5,6 +5,7 @@ import OrderDto, { UpdateOrderDto } from "./order.dto";
 import { validate } from "class-validator";
 import RequestValidationError from "../common/error-handlers/validation";
 import BadRequestError from "../common/error-handlers/badrequest";
+import { Types } from "mongoose";
 
 export default class OrderController {
   static async createOrder(req: Request, res: Response, next: NextFunction) {
@@ -83,6 +84,20 @@ export default class OrderController {
       res.status(200).json(products);
     } catch (error) {
       console.log(error);
+      next(error);
+    }
+  }
+
+  static async deleteOrder(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = req.params["id"];
+      if (!id) {
+        throw new BadRequestError("valid order id required");
+      }
+
+      const deletedOrder = await orderService.deleteOrder(id);
+      res.status(200).json(deletedOrder);
+    } catch (error) {
       next(error);
     }
   }
