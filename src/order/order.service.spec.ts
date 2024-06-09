@@ -253,4 +253,24 @@ describe("ProductService", () => {
     expect(Product.findById).toHaveBeenCalledWith("1");
     expect(data).toEqual([{ _id: "1" }]);
   });
+
+  it("should delete a specific order", async () => {
+    Order.findByIdAndDelete = jest.fn().mockReturnValue({
+      _id: "orderId2",
+      products: ["1"],
+      user: "test user",
+    });
+    ProductLine.findOneAndDelete = jest.fn().mockReturnValue({
+      order_id: "orderId2",
+    });
+
+    const orderService = new OrderService();
+    const data = await orderService.deleteOrder("orderId2");
+
+    expect(ProductLine.findOneAndDelete).toHaveBeenCalledWith({
+      order_id: "orderId2",
+    });
+    expect(Order.findByIdAndDelete).toHaveBeenCalledWith("orderId2");
+    expect(data?._id).toEqual("orderId2");
+  });
 });

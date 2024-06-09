@@ -461,3 +461,42 @@ npm run test
 				}
 			]
 			```
+
+#### Update a specific order
+- /orders/user/:id:
+	* method: `put`
+	* authentication: `required`
+	* body:
+		```javascript
+		{
+			"productLine": [
+				
+				{
+					"id": "product line id",
+					"productId": "product id",
+					"quantity": product quantity
+				}
+				
+			]
+		}
+		```
+	* route params: `order id`
+	* example:
+		- request:  
+			`curl -X PUT "localhost:8000/orders/66632ef4f8607d85c5076835" -H "Content-type: application/json" -H "authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOiI2NjYzMmVmNGY4NjA3ZDg1YzUwNzY4MzUiLCJpYXQiOjE3MTc3ODYzOTEuNTI2LCJleHAiOjE3MTc3ODY2OTEuNTEzLCJ0eXBlIjoiYWNjZXNzX3Rva2VuIn0.RD7HS6xREhtTUpb-zj4oKkQ1D8hnr_HR09RopKY6knc"`
+
+		- response: 
+			```javascript 
+			[
+				{
+					"_id": "66652615ad45463b97eb1676",
+					"products": [
+						"6665263dad45463b97eb1680"
+					],
+					"user_id": "66632ef4f8607d85c5076835",
+					"created_at": "2024-06-09T03:48:37.879Z",
+					"updated_at": "2024-06-09T03:48:37.879Z",
+					"__v": 2
+				}
+			]
+			```

@@ -149,5 +149,10 @@ export class OrderService {
     const results = await Promise.all(products);
     return results;
   }
+
+  async deleteOrder(orderId: Types.ObjectId | string) {
+    await ProductLine.findOneAndDelete({ order_id: orderId });
+    return await Order.findByIdAndDelete(orderId);
+  }
 }
 export default new OrderService();
