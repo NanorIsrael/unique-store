@@ -50,8 +50,11 @@ export async function verifyAdminUser(
     const tokenService = new TokenService();
     const userId = await tokenService.verifyToken(jwt);
     const adminService = new AdminService();
-    const userId = await adminService.findAdminById(userId);
     if (!userId) {
+      throw new NotAuthorisedError();
+    }
+    const admin = await adminService.findAdminById(userId);
+    if (!admin) {
       throw new NotAuthorisedError();
     }
 
@@ -61,5 +64,3 @@ export async function verifyAdminUser(
   }
   next();
 }
-
-

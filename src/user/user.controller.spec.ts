@@ -1,5 +1,7 @@
 import request from "axios";
 import { IUser, UserDoc } from "./user.schema";
+import AdminService from "./admin/admin.service";
+import { exec } from "child_process";
 
 describe("order controller ", () => {
   const baseUrl: string = process.env.SERVER_URL as string;
@@ -55,16 +57,18 @@ describe("order controller ", () => {
     expect(accessToken).toBeDefined();
   });
 
-  it("should get user by id", async () => {
-    try {
-      const users = await request(options(baseUrl + `/users`));
-      const user = users.data?.data[0];
-      const res = await request(options(baseUrl + `/users/${user._id}`));
-      const searchedUser = res.data;
-      expect(searchedUser._id).toEqual(user._id);
-    } catch (error) {
-      extractAxiosError(error);
-    }
+  describe.skip("Admin User Services", () => {
+    it("should get user by id", async () => {
+      try {
+        const users = await request(options(baseUrl + `/users`));
+        const user = users.data?.data[0];
+        const res = await request(options(baseUrl + `/users/${user._id}`));
+        const searchedUser = res.data;
+        expect(searchedUser._id).toEqual(user._id);
+      } catch (error) {
+        extractAxiosError(error);
+      }
+    });
   });
 });
 

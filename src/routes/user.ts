@@ -1,11 +1,11 @@
 import express from "express";
 import userController from "../user/user.controller";
-import { verifyUser } from "../common/auth";
+import { verifyAdminUser, verifyUser } from "../common/auth";
 
 const user = express();
 
-user.get("/", verifyUser, userController.getAllUsersByPagination);
-user.get("/:id", verifyUser, userController.getUserByID);
+user.get("/", verifyAdminUser, userController.getAllUsersByPagination);
+user.get("/:id", verifyAdminUser, userController.getUserByID);
 user.put("/:id", verifyUser, userController.updateUser);
 user.delete("/", verifyUser, userController.deleteUser);
 user.post("/register", userController.findAndCreateUser);
