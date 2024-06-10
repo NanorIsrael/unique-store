@@ -150,4 +150,40 @@ describe("ProductService", () => {
       });
     });
   });
+
+  describe("getProductLowOnStock", () => {
+    it("should return paginated products below a certain stock", async () => {
+      const mockProducts = [
+        { name: "product1", stock: 5 },
+        { name: "product2", stock: 2 },
+      ];
+      (Product as any).countDocuments.mockResolvedValue(10);
+      (Product as any).find.mockResolvedValue(mockProducts);
+
+      const skip = jest.fn().mockReturnThis();
+      const limit = jest.fn().mockResolvedValue(mockProducts);
+      (Product.find as jest.Mock).mockReturnValue({
+        skip,
+        limit,
+      });
+      const productService = new ProductService();
+      const result = await productService.getLowStockProducts({
+        page: 1,
+        limit: 2,
+        threshHold: 5,
+      });
+
+      expect(Product.countDocuments).toHaveBeenCalled();
+      expect(Product.find).toHaveBeenCalledWith({ stock: { $lt: 5 } });
+      expect(Product.find().skip).toHaveBeenCalledWith(0);
+      expect(Product.find().limit).toHaveBeenCalledWith(2);
+      expect(result).toEqual({
+        page: 1,
+        limit: 2,
+        total: 10,
+        pages: 5,
+        data: mockProducts,
+      });
+    });
+  });
 });

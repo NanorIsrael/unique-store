@@ -42,6 +42,24 @@ export class ProductService {
     const data = await Product.find().skip(skip).limit(limit);
     return { page, limit, total, pages, data };
   }
+
+  async getLowStockProducts({
+    threshHold,
+    page,
+    limit,
+  }: {
+    page: number;
+    limit: number;
+    threshHold: number;
+  }) {
+    const skip = (page - 1) * limit;
+    const total = await Product.countDocuments();
+    const pages = Math.ceil(total / limit);
+    const data = await Product.find({ stock: { $lt: threshHold } })
+      .skip(skip)
+      .limit(limit);
+    return { page, limit, total, pages, data };
+  }
 }
 
 export default new ProductService();

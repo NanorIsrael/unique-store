@@ -342,6 +342,28 @@ npm run test
 			}
 			```
 
+#### minimum product
+- /products/stock:
+	* method: `get`
+	* authentication: `required (admin)`
+	* body: `blank`
+	* route params: `limit: number, page: number, minimum(stock)`
+	* example:
+		- request:  
+			`curl -X GET "localhost:8000/products/stock" -H "Content-type: application/json"' -H "authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOiI2NjYzMmVmNGY4NjA3ZDg1YzUwNzY4MzUiLCJpYXQiOjE3MTc3ODYzOTEuNTI2LCJleHAiOjE3MTc3ODY2OTEuNTEzLCJ0eXBlIjoiYWNjZXNzX3Rva2VuIn0.RD7HS6xREhtTUpb-zj4oKkQ1D8hnr_HR09RopKY6knc" `
+
+		- response: 
+			```javascript 
+			[{
+				"_id": "66632e01a5e2c70a79e51886",
+				"name": "updated product",
+				"stock": 5,
+				"price": 90.99,
+				"createdAt": "2024-06-07T15:57:53.147Z",
+				"__v": 0
+			}]
+			```
+
 ## Orders API Documentation
 #### Get all orders
 - /orders:

@@ -120,5 +120,31 @@ class ProductController {
       next(error);
     }
   }
+
+  static fetchLowStockProducts = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
+      const limit = req.query.limit
+        ? parseInt(req.query.limit as string, 10)
+        : 10;
+      const minimum = req.query.minimum
+        ? parseInt(req.query.minimum as string, 10)
+        : 5;
+
+      const products = await productService.getLowStockProducts({
+        threshHold: minimum,
+        page,
+        limit,
+      });
+
+      return res.json(products);
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 export default ProductController;
