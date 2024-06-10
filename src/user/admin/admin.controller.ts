@@ -1,23 +1,38 @@
 import { NextFunction, Request, Response } from "express";
 import BadRequestError from "../../common/error-handlers/badrequest";
 import AdminService from "./admin.service";
+import { CreateAdminUserDto } from "./admin.dto";
+import { validate } from "class-validator";
+import RequestValidationError from "../../common/error-handlers/validation";
+import UserService from "../user.service";
 
-class UserController {
+class AdminUserController {
   static async findAndCreateAdminUser(
     req: Request,
     res: Response,
     next: NextFunction,
   ) {
     try {
-      const { userId } = req.body;
+      const { email } = req.body;
 
+      const adminCreateDto = new CreateAdminUserDto(email);
+      const errors = await validate(adminCreateDto);
+      if (errors.length > 0) {
+        throw new RequestValidationError(errors);
+      }
+      const existingUser = await new UserService().findUserByIdOrEmail({
+        email,
+      });
+      if (!existingUser) {
+        throw new BadRequestError(`user with email: ${email} does not exist.`);
+      }
       const service = new AdminService();
-      const existingUser = await service.findAdminById(userId);
-      if (existingUser) {
-        return existingUser;
+      const existingAdminUser = await service.findAdminById(existingUser._id);
+      if (existingAdminUser) {
+        return existingAdminUser;
       }
 
-      const userDoc = await service.createAdmin(userId);
+      const userDoc = await service.createAdmin(existingUser._id);
       res.status(201).json(userDoc);
     } catch (err) {
       next(err);
@@ -80,4 +95,4 @@ class UserController {
   }
 }
 
-export default UserController;
+export default AdminUserController;
