@@ -46,7 +46,7 @@ describe("UserService", () => {
     expect(result?._id).toEqual(user._id);
   });
 
-  it("should delet user by id", async () => {
+  it("should delete user by id", async () => {
     const user = await service.createUser(testUser as IUser);
 
     const result = await service.deletUserById(user._id);
@@ -67,14 +67,13 @@ describe("UserService", () => {
   });
 
   describe("Admin User Services", () => {
-    it("should get user by id", async () => {
+    it("should get admin user by id", async () => {
       const user = await service.createUser(testUser as IUser);
       const userDoc = await service.findUserByIdOrEmail({
         email: user.email,
       });
       expect(userDoc).toBeDefined();
       expect(userDoc?.email).toEqual(user.email);
-
       const admin = await new AdminService().createAdmin(userDoc!._id);
       expect(admin).toHaveProperty("user_id");
       expect(admin).toBeDefined();

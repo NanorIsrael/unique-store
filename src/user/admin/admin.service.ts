@@ -8,7 +8,7 @@ export default class AdminService {
   }
 
   async createAdmin(userId: string | Types.ObjectId): Promise<AdminDoc> {
-    const newUser = new Admin(userId);
+    const newUser = new Admin({ user_id: userId });
     return newUser.save();
   }
 

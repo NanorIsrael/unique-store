@@ -57,14 +57,32 @@ describe("order controller ", () => {
     expect(accessToken).toBeDefined();
   });
 
-  describe.skip("Admin User Services", () => {
+  describe("Admin User Services", () => {
     it("should get user by id", async () => {
       try {
+        const response = await request(
+          options(
+            baseUrl + `/users/admin`,
+            "POST",
+            { data: { email: testUser.email } },
+            {
+              authorization: `JWT ${accessToken}`,
+            },
+          ),
+        );
+        const adminUser = response.data;
+
         const users = await request(options(baseUrl + `/users`));
         const user = users.data?.data[0];
         const res = await request(options(baseUrl + `/users/${user._id}`));
         const searchedUser = res.data;
         expect(searchedUser._id).toEqual(user._id);
+
+        await request(
+          options(baseUrl + `/users/admin`, "DELETE", {
+            data: { userId: adminUser.userId },
+          }),
+        );
       } catch (error) {
         extractAxiosError(error);
       }

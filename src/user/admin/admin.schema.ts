@@ -1,5 +1,5 @@
-// models/User.js
-import mongoose, { Types } from "mongoose";
+// models/adminUser.js
+import mongoose, { Schema, Types } from "mongoose";
 
 export interface AdminDoc extends Document {
   createdAt: NativeDate;
@@ -9,6 +9,7 @@ export interface AdminDoc extends Document {
 const adminUserSchema = new mongoose.Schema(
   {
     user_id: {
+      type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
