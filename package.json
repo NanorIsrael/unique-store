@@ -7,7 +7,7 @@
     "clean": "rm -rf node_modules",
     "start-dev": "webpack-dev-server --open",
     "build": "tsc -p tsconfig.build.json",
-    "test": "npx jest",
+    "test": "NODE_ENV=test npx jest",
     "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts)\"",
     "lint": "npx eslint \"src/**\" \"__tests__/**\"",
     "lint-fix": "npx eslint \"src/**\" \"__tests__/**\" --fix",

@@ -67,13 +67,13 @@ class UserController {
 
   static async getUserByID(req: Request, res: Response, next: NextFunction) {
     try {
-      const { userId } = req.params;
+      const { id } = req.params;
 
-      if (!userId) {
-        throw new BadRequestError("Invalid 'user id' parameter");
+      if (!id) {
+        throw new BadRequestError("invalid 'user id' parameter");
       }
 
-      const user = await userService.findUserByIdOrEmail({ userId });
+      const user = await userService.findUserByIdOrEmail({ userId: id });
       res.status(200).json(user);
     } catch (err) {
       next(err);

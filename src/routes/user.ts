@@ -8,10 +8,11 @@ const user = express();
 user.get("/", verifyAdminUser, userController.getAllUsersByPagination);
 user.get("/:id", verifyAdminUser, userController.getUserByID);
 user.put("/:id", verifyUser, userController.updateUser);
-user.delete("/", verifyUser, userController.deleteUser);
+user.delete("/", verifyAdminUser, userController.deleteUser);
 user.post("/register", userController.findAndCreateUser);
 user.post("/login", userController.userLogin);
 user.post("/token", userController.resetToken);
-user.post("/admin", adminUserController.findAndCreateAdminUser);
+user.post("/admin", verifyUser, adminUserController.findAndCreateAdminUser);
+user.delete("/admin/:id", verifyAdminUser, adminUserController.deleteAdminUser);
 
 export default user;

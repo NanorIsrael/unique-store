@@ -1,5 +1,4 @@
 import { RedisClientType, createClient } from "redis";
-import redisClient from "./redis";
 
 describe("Redis Service", () => {
   let client: RedisClientType;

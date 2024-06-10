@@ -12,10 +12,14 @@ export default class AdminService {
     return newUser.save();
   }
 
-  async findAdminById(
+  async findAdminById(id: string | Types.ObjectId): Promise<AdminDoc | null> {
+    return await Admin.findById(id);
+  }
+
+  async findAdminByUserId(
     userId: string | Types.ObjectId,
   ): Promise<AdminDoc | null> {
-    return await Admin.findById(userId);
+    return await Admin.findOne({ user_id: userId });
   }
 
   async getAllAdminUsers(): Promise<AdminDoc[]> {
@@ -23,10 +27,8 @@ export default class AdminService {
     return adminUsers;
   }
 
-  async deletAdminById(
-    userId: string | Types.ObjectId,
-  ): Promise<AdminDoc | null> {
-    return await Admin.findByIdAndDelete({ _id: userId });
+  async deletAdminById(id: string | Types.ObjectId): Promise<AdminDoc | null> {
+    return await Admin.findByIdAndDelete(id);
   }
 }
 export const userService = new AdminService();

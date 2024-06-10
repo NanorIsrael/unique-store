@@ -1,13 +1,13 @@
 import request from "axios";
 import { IUser, UserDoc } from "./user.schema";
-import AdminService from "./admin/admin.service";
-import { exec } from "child_process";
+import { AdminDoc } from "./admin/admin.schema";
 
-describe("order controller ", () => {
+describe("user controller ", () => {
   const baseUrl: string = process.env.SERVER_URL as string;
   let accessToken: string;
   let testUser: IUser;
   let registeredUser: Partial<UserDoc>;
+  let adminTester: AdminDoc;
 
   beforeAll(async () => {
     testUser = {
@@ -35,17 +35,38 @@ describe("order controller ", () => {
       );
       const results = res.data;
       accessToken = results.accessToken;
+
+      const createAdminResponse = await request(
+        options(
+          baseUrl + `/users/admin`,
+          "POST",
+          { data: { email: testUser.email } },
+          {
+            authorization: `JWT ${accessToken}`,
+          },
+        ),
+      );
+      adminTester = createAdminResponse.data;
     } catch (error) {
-      console.log(extractAxiosError(error).data);
+      extractAxiosError(error);
     }
   });
 
   afterEach(async () => {
-    await request(
-      options(baseUrl + `/users`, "DELETE", null, {
-        authorization: `JWT ${accessToken}`,
-      }),
-    );
+    try {
+      await request(
+        options(baseUrl + `/users`, "DELETE", null, {
+          authorization: `JWT ${accessToken}`,
+        }),
+      );
+      await request(
+        options(baseUrl + `/users/admin/${adminTester._id}`, "DELETE", null, {
+          authorization: `JWT ${accessToken}`,
+        }),
+      );
+    } catch (error) {
+      extractAxiosError(error);
+    }
   });
 
   it("should register a user", async () => {
@@ -59,33 +80,20 @@ describe("order controller ", () => {
 
   describe("Admin User Services", () => {
     it("should get user by id", async () => {
-      try {
-        const response = await request(
-          options(
-            baseUrl + `/users/admin`,
-            "POST",
-            { data: { email: testUser.email } },
-            {
-              authorization: `JWT ${accessToken}`,
-            },
-          ),
-        );
-        const adminUser = response.data;
+      const users = await request(
+        options(baseUrl + `/users`, "GET", null, {
+          authorization: `JWT ${accessToken}`,
+        }),
+      );
+      const user = users.data?.data[0];
+      const res = await request(
+        options(baseUrl + `/users/${user._id}`, "GET", null, {
+          authorization: `JWT ${accessToken}`,
+        }),
+      );
+      const searchedUser = res.data;
 
-        const users = await request(options(baseUrl + `/users`));
-        const user = users.data?.data[0];
-        const res = await request(options(baseUrl + `/users/${user._id}`));
-        const searchedUser = res.data;
-        expect(searchedUser._id).toEqual(user._id);
-
-        await request(
-          options(baseUrl + `/users/admin`, "DELETE", {
-            data: { userId: adminUser.userId },
-          }),
-        );
-      } catch (error) {
-        extractAxiosError(error);
-      }
+      expect(searchedUser._id).toEqual(user._id);
     });
   });
 });

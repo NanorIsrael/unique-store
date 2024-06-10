@@ -53,7 +53,7 @@ export async function verifyAdminUser(
     if (!userId) {
       throw new NotAuthorisedError();
     }
-    const admin = await adminService.findAdminById(userId);
+    const admin = await adminService.findAdminByUserId(userId);
     if (!admin) {
       throw new NotAuthorisedError();
     }

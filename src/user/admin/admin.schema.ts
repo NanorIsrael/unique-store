@@ -2,6 +2,7 @@
 import mongoose, { Schema, Types } from "mongoose";
 
 export interface AdminDoc extends Document {
+  _id: Types.ObjectId;
   createdAt: NativeDate;
   updatedAt: NativeDate;
   user_id: Types.ObjectId;

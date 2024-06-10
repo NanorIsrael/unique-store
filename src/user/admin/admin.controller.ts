@@ -27,9 +27,11 @@ class AdminUserController {
         throw new BadRequestError(`user with email: ${email} does not exist.`);
       }
       const service = new AdminService();
-      const existingAdminUser = await service.findAdminById(existingUser._id);
+      const existingAdminUser = await service.findAdminByUserId(
+        existingUser._id,
+      );
       if (existingAdminUser) {
-        return existingAdminUser;
+        return res.status(201).json(existingAdminUser);
       }
 
       const userDoc = await service.createAdmin(existingUser._id);
@@ -78,15 +80,16 @@ class AdminUserController {
     next: NextFunction,
   ) {
     try {
-      const { userId } = req.body;
+      const { id } = req.params;
 
-      if (!userId) {
-        throw new BadRequestError("invalid 'admin id' parameter");
+      if (!id) {
+        throw new BadRequestError("user id required.");
       }
+
       const service = new AdminService();
-      const adminUser = await service.deletAdminById(userId);
+      const adminUser = await service.deletAdminById(id as string);
       if (!adminUser) {
-        throw new BadRequestError(`user with id: ${userId} does not exist.`);
+        throw new BadRequestError(`user with id: ${id} does not exist.`);
       }
       res.status(200).json(adminUser);
     } catch (err) {
