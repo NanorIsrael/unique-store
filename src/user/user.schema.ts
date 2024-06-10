@@ -6,26 +6,26 @@ export interface IUser {
   name: string;
   email: string;
   password: string;
-  created_at: Date;
 }
 
 export interface UserDoc extends IUser, Document {
   _id: Types.ObjectId;
 }
 
-const userSchema = new mongoose.Schema({
-  name: String,
-  email: {
-    type: String,
-    required: true,
-    unique: true,
+const userSchema = new mongoose.Schema(
+  {
+    name: String,
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: String,
   },
-  password: String,
-  created_at: {
-    type: Date,
-    default: Date.now,
+  {
+    timestamps: true,
   },
-});
+);
 // Pre middleware to hash the password before saving the user
 userSchema.pre("save", async function (next) {
   // Check if the password is modified or it's a new user

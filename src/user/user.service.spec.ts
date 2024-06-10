@@ -13,7 +13,6 @@ describe("UserService", () => {
       email: "george.bluth@reqres.in",
       name: "George",
       password: "Bluth@360",
-      created_at: new Date(),
     };
   });
 

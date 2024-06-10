@@ -7,7 +7,6 @@ export interface SecuredUser {
   _id: Types.ObjectId;
   name: string;
   email: string;
-  createdAt: Date;
 }
 
 export interface IUserService {
@@ -70,15 +69,12 @@ export default class UserService implements IUserService {
       _id: obj._id,
       name: obj.name,
       email: obj.email,
-      createdAt: obj.created_at,
     }));
     return { page, limit, total, pages, data };
   }
 
-  async deletUserById(
-    userId: string | Types.ObjectId,
-  ): Promise<UserDoc | null> {
-    return await User.findByIdAndDelete({ _id: userId });
+  async deletUserById(id: string | Types.ObjectId): Promise<UserDoc | null> {
+    return await User.findByIdAndDelete(id);
   }
 
   async updateUser(

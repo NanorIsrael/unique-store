@@ -14,7 +14,6 @@ describe("user controller ", () => {
       email: `testuser@gmil.com`,
       password: "tesA@123",
       name: "testUser",
-      created_at: new Date(),
     };
   });
 
@@ -55,7 +54,7 @@ describe("user controller ", () => {
   afterEach(async () => {
     try {
       await request(
-        options(baseUrl + `/users`, "DELETE", null, {
+        options(baseUrl + `/users/${registeredUser._id}`, "DELETE", null, {
           authorization: `JWT ${accessToken}`,
         }),
       );

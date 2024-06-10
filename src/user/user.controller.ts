@@ -82,15 +82,15 @@ class UserController {
 
   static async deleteUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const { userId } = req.body;
+      const { id } = req.params;
 
-      if (!userId) {
+      if (!id) {
         throw new BadRequestError("invalid 'user id' parameter");
       }
 
-      const user = await userService.deletUserById(userId);
+      const user = await userService.deletUserById(id);
       if (!user) {
-        throw new BadRequestError(`user with id: ${userId} does not exist.`);
+        throw new BadRequestError(`user with id: ${id} does not exist.`);
       }
       res.status(200).json(user);
     } catch (err) {
