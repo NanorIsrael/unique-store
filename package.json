@@ -4,6 +4,7 @@
   "description": "myapp API",
   "scripts": {
     "dev": "nodemon -r dotenv/config --exec ts-node ./src/main",
+    "start": "nodemon -r dotenv/config --exec ts-node ./src/main",
     "clean": "rm -rf node_modules",
     "start-dev": "webpack-dev-server --open",
     "build": "tsc -p tsconfig.build.json",

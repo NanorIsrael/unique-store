@@ -4,7 +4,10 @@ services:
   app:
     build: .
     ports:
-        - "8000:8000"
+      - "8000:8000"
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017/unique-store
+      - REDIS_URL=redis://redis:6379
     depends_on:
       - mongo
       - redis
