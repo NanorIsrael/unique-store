@@ -38,7 +38,6 @@ describe("UserService", () => {
 
   it("should find user by id", async () => {
     const user = await service.createUser(testUser as IUser);
-
     const result = await service.findUserByIdOrEmail({ userId: user._id });
     expect(result).toBeDefined();
     expect(result).toHaveProperty("_id");

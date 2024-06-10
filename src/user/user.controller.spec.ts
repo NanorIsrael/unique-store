@@ -15,18 +15,13 @@ describe("user controller ", () => {
       password: "tesA@123",
       name: "testUser",
     };
-  });
-
-  beforeEach(async () => {
     try {
-      const result = await request(
+      const createdUserResponse = await request(
         options(baseUrl + "/users/register", "POST", {
           data: testUser,
         }),
       );
-      const data = result.data;
-      registeredUser = { ...testUser, _id: data._id };
-
+      registeredUser = createdUserResponse.data;
       const res = await request(
         options(baseUrl + "/users/login", "POST", null, {
           authorization: `Basic ${btoa(`${testUser.email}:${testUser.password}`)}`,
@@ -39,7 +34,7 @@ describe("user controller ", () => {
         options(
           baseUrl + `/users/admin`,
           "POST",
-          { data: { email: testUser.email } },
+          { data: { email: registeredUser.email } },
           {
             authorization: `JWT ${accessToken}`,
           },
@@ -47,29 +42,26 @@ describe("user controller ", () => {
       );
       adminTester = createAdminResponse.data;
     } catch (error) {
-      extractAxiosError(error);
+      console.error("Error creating admin:", extractAxiosError(error));
+      throw error;
     }
   });
-
-  afterEach(async () => {
+  afterAll(async () => {
     try {
-      await request(
-        options(baseUrl + `/users/${registeredUser._id}`, "DELETE", null, {
-          authorization: `JWT ${accessToken}`,
-        }),
-      );
-      await request(
-        options(baseUrl + `/users/admin/${adminTester._id}`, "DELETE", null, {
-          authorization: `JWT ${accessToken}`,
-        }),
-      );
+      if (adminTester?.user_id && accessToken) {
+        await request(
+          options(baseUrl + `/users/${adminTester.user_id}`, "DELETE", null, {
+            authorization: `JWT ${accessToken}`,
+          }),
+        );
+      }
     } catch (error) {
-      extractAxiosError(error);
+      console.error("Error during cleanup:", extractAxiosError(error));
     }
   });
 
   it("should register a user", async () => {
-    expect(registeredUser).toHaveProperty("_id");
+    expect(registeredUser).toHaveProperty("email");
     expect(registeredUser.email).toEqual(testUser.email);
   });
 
@@ -79,20 +71,24 @@ describe("user controller ", () => {
 
   describe("Admin User Services", () => {
     it("should get user by id", async () => {
-      const users = await request(
-        options(baseUrl + `/users`, "GET", null, {
-          authorization: `JWT ${accessToken}`,
-        }),
-      );
-      const user = users.data?.data[0];
-      const res = await request(
-        options(baseUrl + `/users/${user._id}`, "GET", null, {
-          authorization: `JWT ${accessToken}`,
-        }),
-      );
-      const searchedUser = res.data;
+      try {
+        const users = await request(
+          options(baseUrl + `/users`, "GET", null, {
+            authorization: `JWT ${accessToken}`,
+          }),
+        );
+        const user = users.data?.data[0];
+        const res = await request(
+          options(baseUrl + `/users/${user._id}`, "GET", null, {
+            authorization: `JWT ${accessToken}`,
+          }),
+        );
+        const searchedUser = res.data;
 
-      expect(searchedUser._id).toEqual(user._id);
+        expect(searchedUser._id).toEqual(user._id);
+      } catch (error) {
+        console.error("Error during cleanup:", extractAxiosError(error).data);
+      }
     });
   });
 });

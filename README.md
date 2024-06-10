@@ -13,6 +13,12 @@ npm run dev
 ## Test
 npm run test
 
+## Note:
+- User roles have been seperated from admin roles.
+to creat admin check user api docs for details.
+- envs can be found in the env.txt file
+
+
 ## User API Documentation
 #### Register a user
 - /users/register:
@@ -95,7 +101,7 @@ npm run test
 		```
 	* example:
 		- request:  
-			`curl -X POST "localhost:8000/users/login" -H "Content-type: application/json" -H "authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOiI2NjYwZTJjZWI0MWY5MWY2N2E3ODQ2MGIiLCJpYXQiOjE3MTc2MjU1NTMuNTkyLCJleHAiOjE3MTc3MTE5NTMuNTkyLCJ0eXBlIjoicmVmcmVzaF90b2tlbiJ9.-EtVSbL-0r--PZB9FWlTQ6bXEgE0xQ-FSv0VJMnIgco"`
+			`curl -X POST "localhost:8000/users/login" -H "Content-type: application/json" -H "authorization: Basic a2luZ0BnbWFpbC5jb206anVuaW9yUEA5"`
 
 		- response: 
 			```javascript 
@@ -109,12 +115,12 @@ npm run test
 #### Get all users
 - /users:
 	* method: `get`
-	* authentication: `required`
+	* authentication: `required (admin)`
 	* body: `blank`
 	* route params: `page and limit`
 	* example:
 		- request:  
-			`curl -X GET "localhost:8000/users?page=1&limit=20" -H "Content-type: application/json"`
+			`curl -X GET "localhost:8000/users?page=1&limit=20" -H "Content-type: application/json" -H "authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOiI2NjY3Mjc2ZDFiODY2Y2YwODYwNGVmNjIiLCJpYXQiOjE3MTgwMzcxODMuNzc4LCJleHAiOjE3MTgwMzg5ODMuNzc4LCJ0eXBlIjoiYWNjZXNzX3Rva2VuIn0.1PNlgTqnRuI8hsnp3wxyh8FtIl1hbgv0MWJolyPC7m8"`
 
 		- response: 
 			```javascript 
@@ -149,7 +155,7 @@ npm run test
 	* route params: `user id`
 	* example:
 		- request:  
-			`curl -X GET "localhost:8000/users/6662f0a10169005292883001" -H "Content-type: application/json"`
+			`curl -X GET "localhost:8000/users/666725a5190f82545738d1fd" -H "Content-type: application/json" -H "authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOiI2NjY3Mjc2ZDFiODY2Y2YwODYwNGVmNjIiLCJpYXQiOjE3MTgwMzcxODMuNzc4LCJleHAiOjE3MTgwMzg5ODMuNzc4LCJ0eXBlIjoiYWNjZXNzX3Rva2VuIn0.1PNlgTqnRuI8hsnp3wxyh8FtIl1hbgv0MWJolyPC7m8"`
 
 		- response: 
 			```javascript 
@@ -170,7 +176,7 @@ npm run test
 	* route params: `user id`
 	* example:
 		- request:  
-			`curl -X PUT "localhost:8000/users/6662f0a10169005292883001" -H "Content-type: application/json" -d '{"name": "Jane Doe"}'`
+			`curl -X PUT "localhost:8000/users/666725a5190f82545738d1fd" -H "Content-type: application/json" -d '{"name": "Jane Doe"}' -H "authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOiI2NjY3Mjc2ZDFiODY2Y2YwODYwNGVmNjIiLCJpYXQiOjE3MTgwMzcxODMuNzc4LCJleHAiOjE3MTgwMzg5ODMuNzc4LCJ0eXBlIjoiYWNjZXNzX3Rva2VuIn0.1PNlgTqnRuI8hsnp3wxyh8FtIl1hbgv0MWJolyPC7m8"`
 
 		- response: 
 			```javascript 
@@ -195,7 +201,7 @@ npm run test
 	* route params: `none`
 	* example:
 		- request:  
-			`curl -X DELETE "localhost:8000/users" -H "Content-type: application/json"`
+			`curl -X DELETE "localhost:8000/users/666725a5190f82545738d1fd" -H "Content-type: application/json" -H "authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOiI2NjY3Mjc2ZDFiODY2Y2YwODYwNGVmNjIiLCJpYXQiOjE3MTgwMzcxODMuNzc4LCJleHAiOjE3MTgwMzg5ODMuNzc4LCJ0eXBlIjoiYWNjZXNzX3Rva2VuIn0.1PNlgTqnRuI8hsnp3wxyh8FtIl1hbgv0MWJolyPC7m8"`
 
 		- response: 
 			```javascript 
@@ -208,6 +214,31 @@ npm run test
 					"created_at": "2024-06-07T16:01:56.540Z",
 					"__v": 0
 
+				}
+			```
+#### Create admin user
+- /users/admin:
+	* method: `post`
+	* authentication: `required`
+	* body: 
+	```javascript
+		{
+			email: string
+		}	
+	```
+	* route params: `none`
+	* example:
+		- request:  
+			`curl -X POST "localhost:8000/users/admin" -H "Content-type: application/json" -H "authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOiI2NjY3Mjc2ZDFiODY2Y2YwODYwNGVmNjIiLCJpYXQiOjE3MTgwMzcxODMuNzc4LCJleHAiOjE3MTgwMzg5ODMuNzc4LCJ0eXBlIjoiYWNjZXNzX3Rva2VuIn0.1PNlgTqnRuI8hsnp3wxyh8FtIl1hbgv0MWJolyPC7m8" -d '{"email": "king@gmail.com"}'`
+
+		- response: 
+			```javascript 
+				{
+					"_id": "66632ef4f8607d85c5076835",
+					"user_id":"6667025234c463b810e7af31",
+					"created_at": "2024-06-07T16:01:56.540Z",
+					"createdAt":"2024-06-10T13:43:14.358Z","updatedAt":"2024-06-10T13:43:14.358Z",
+					"__v":0
 				}
 			```
 
@@ -229,7 +260,7 @@ npm run test
 	* route params: `none`
 	* example:
 		- request:  
-			`curl -X POST "localhost:8000/products" -H "Content-type: application/json" -d '{"name": "coke", "stock": 6, "price": 2.00}' -H "authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOiI2NjYzMmVmNGY4NjA3ZDg1YzUwNzY4MzUiLCJpYXQiOjE3MTc3ODYzOTEuNTI2LCJleHAiOjE3MTc3ODY2OTEuNTEzLCJ0eXBlIjoiYWNjZXNzX3Rva2VuIn0.RD7HS6xREhtTUpb-zj4oKkQ1D8hnr_HR09RopKY6knc"  `
+			`curl -X POST "localhost:8000/products" -H "Content-type: application/json" -d '{"name": "coke", "stock": 6, "price": 2.00}' -H "authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOiI2NjY3Mjc2ZDFiODY2Y2YwODYwNGVmNjIiLCJpYXQiOjE3MTgwMzcxODMuNzc4LCJleHAiOjE3MTgwMzg5ODMuNzc4LCJ0eXBlIjoiYWNjZXNzX3Rva2VuIn0.1PNlgTqnRuI8hsnp3wxyh8FtIl1hbgv0MWJolyPC7m8"`
 
 		- response: 
 			```javascript 
@@ -249,7 +280,7 @@ npm run test
 	* route params: `none`
 	* example:
 		- request:  
-			`curl -X GET "localhost:8000/products" -H "Content-type: application/json"`
+			`curl -X GET "localhost:8000/products" -H "Content-type: application/json" -H "authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOiI2NjY3Mjc2ZDFiODY2Y2YwODYwNGVmNjIiLCJpYXQiOjE3MTgwMzcxODMuNzc4LCJleHAiOjE3MTgwMzg5ODMuNzc4LCJ0eXBlIjoiYWNjZXNzX3Rva2VuIn0.1PNlgTqnRuI8hsnp3wxyh8FtIl1hbgv0MWJolyPC7m8"`
 
 		- response: 
 			```javascript 
@@ -285,7 +316,7 @@ npm run test
 	* route params: `product id`
 	* example:
 		- request:  
-			`curl -X GET "localhost:8000/products/666263892789061b37756b19" -H "Content-type: application/json"`
+			`curl -X GET "localhost:8000/products/66672c001b866cf08604ef83" -H "Content-type: application/json" -H "authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOiI2NjY3Mjc2ZDFiODY2Y2YwODYwNGVmNjIiLCJpYXQiOjE3MTgwMzcxODMuNzc4LCJleHAiOjE3MTgwMzg5ODMuNzc4LCJ0eXBlIjoiYWNjZXNzX3Rva2VuIn0.1PNlgTqnRuI8hsnp3wxyh8FtIl1hbgv0MWJolyPC7m8"`
 
 		- response: 
 			```javascript 
@@ -307,7 +338,7 @@ npm run test
 	* route params: `product id`
 	* example:
 		- request:  
-			`curl -X POST "localhost:8000/products/66632e01a5e2c70a79e51886" -H "Content-type: application/json" -d '{"name": "coke", "stock": 6, "price": 2.00}' -H "authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOiI2NjYzMmVmNGY4NjA3ZDg1YzUwNzY4MzUiLCJpYXQiOjE3MTc3ODYzOTEuNTI2LCJleHAiOjE3MTc3ODY2OTEuNTEzLCJ0eXBlIjoiYWNjZXNzX3Rva2VuIn0.RD7HS6xREhtTUpb-zj4oKkQ1D8hnr_HR09RopKY6knc" `
+			`curl -X PUT "localhost:8000/products/66672c001b866cf08604ef83" -H "Content-type: application/json" -d '{"name": "coke", "stock": 6, "price": 2.00}' -H "authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOiI2NjY3Mjc2ZDFiODY2Y2YwODYwNGVmNjIiLCJpYXQiOjE3MTgwMzcxODMuNzc4LCJleHAiOjE3MTgwMzg5ODMuNzc4LCJ0eXBlIjoiYWNjZXNzX3Rva2VuIn0.1PNlgTqnRuI8hsnp3wxyh8FtIl1hbgv0MWJolyPC7m8" `
 
 		- response: 
 			```javascript 
@@ -328,7 +359,7 @@ npm run test
 	* route params: `product id`
 	* example:
 		- request:  
-			`curl -X DELETE "localhost:8000/products/66632e01a5e2c70a79e51886" -H "Content-type: application/json"' -H "authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOiI2NjYzMmVmNGY4NjA3ZDg1YzUwNzY4MzUiLCJpYXQiOjE3MTc3ODYzOTEuNTI2LCJleHAiOjE3MTc3ODY2OTEuNTEzLCJ0eXBlIjoiYWNjZXNzX3Rva2VuIn0.RD7HS6xREhtTUpb-zj4oKkQ1D8hnr_HR09RopKY6knc" `
+			`curl -X DELETE "localhost:8000/products/66672c001b866cf08604ef83" -H "Content-type: application/json" -H "authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOiI2NjY3Mjc2ZDFiODY2Y2YwODYwNGVmNjIiLCJpYXQiOjE3MTgwMzcxODMuNzc4LCJleHAiOjE3MTgwMzg5ODMuNzc4LCJ0eXBlIjoiYWNjZXNzX3Rva2VuIn0.1PNlgTqnRuI8hsnp3wxyh8FtIl1hbgv0MWJolyPC7m8" `
 
 		- response: 
 			```javascript 
@@ -350,7 +381,7 @@ npm run test
 	* route params: `limit: number, page: number, minimum(stock)`
 	* example:
 		- request:  
-			`curl -X GET "localhost:8000/products/stock" -H "Content-type: application/json"' -H "authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOiI2NjYzMmVmNGY4NjA3ZDg1YzUwNzY4MzUiLCJpYXQiOjE3MTc3ODYzOTEuNTI2LCJleHAiOjE3MTc3ODY2OTEuNTEzLCJ0eXBlIjoiYWNjZXNzX3Rva2VuIn0.RD7HS6xREhtTUpb-zj4oKkQ1D8hnr_HR09RopKY6knc" `
+			`curl -X GET "localhost:8000/products/stock" -H "Content-type: application/json" -H "authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOiI2NjY3Mjc2ZDFiODY2Y2YwODYwNGVmNjIiLCJpYXQiOjE3MTgwMzcxODMuNzc4LCJleHAiOjE3MTgwMzg5ODMuNzc4LCJ0eXBlIjoiYWNjZXNzX3Rva2VuIn0.1PNlgTqnRuI8hsnp3wxyh8FtIl1hbgv0MWJolyPC7m8" `
 
 		- response: 
 			```javascript 
@@ -365,6 +396,38 @@ npm run test
 			```
 
 ## Orders API Documentation
+#### Create new product
+- /products:
+	* method: `post`
+	* authentication: `required`
+	* body:
+	```javascript
+		{
+			"productLine": [
+				{
+					"id": "666511fa39b213f3838d9654",
+					"productId": "66632e01a5e2c70a79e51890",
+					"quantity": 9
+				}
+			]
+		}
+	````
+	* route params: `none`
+	* example:
+		- request:  
+			`curl -X POST "localhost:8000/orders" -H "Content-type: application/json" -d '{ "productLine": [{"productId": "66672f311b866cf08604ef99", "quantity": 9}]}' -H "authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOiI2NjY3Mjc2ZDFiODY2Y2YwODYwNGVmNjIiLCJpYXQiOjE3MTgwMzcxODMuNzc4LCJleHAiOjE3MTgwMzg5ODMuNzc4LCJ0eXBlIjoiYWNjZXNzX3Rva2VuIn0.1PNlgTqnRuI8hsnp3wxyh8FtIl1hbgv0MWJolyPC7m8"`
+
+		- response: 
+			```javascript 
+			{
+				"name":"coke",
+				"stock":6,
+				"price":2,
+				"_id":"666372e055664f6a0a45cb4c",
+				"createdAt":"2024-06-07T20:51:44.298Z","__v":0
+			}
+			```
+
 #### Get all orders
 - /orders:
 	* method: `get`
@@ -373,7 +436,7 @@ npm run test
 	* route params: `none`
 	* example:
 		- request:  
-			`curl -X GET "localhost:8000/orders" -H "Content-type: application/json"`
+			`curl -X GET "localhost:8000/orders" -H "Content-type: application/json" -H "authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOiI2NjY3Mjc2ZDFiODY2Y2YwODYwNGVmNjIiLCJpYXQiOjE3MTgwMzcxODMuNzc4LCJleHAiOjE3MTgwMzg5ODMuNzc4LCJ0eXBlIjoiYWNjZXNzX3Rva2VuIn0.1PNlgTqnRuI8hsnp3wxyh8FtIl1hbgv0MWJolyPC7m8"`
 
 		- response: 
 			```javascript 
@@ -402,7 +465,7 @@ npm run test
 	* route params: `product id`
 	* example:
 		- request:  
-			`curl -X GET "localhost:8000/orders/66632f09f8607d85c507683b" -H "Content-type: application/json"`
+			`curl -X GET "localhost:8000/orders/66672f871b866cf08604efa1" -H "Content-type: application/json" -H "authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOiI2NjY3Mjc2ZDFiODY2Y2YwODYwNGVmNjIiLCJpYXQiOjE3MTgwMzcxODMuNzc4LCJleHAiOjE3MTgwMzg5ODMuNzc4LCJ0eXBlIjoiYWNjZXNzX3Rva2VuIn0.1PNlgTqnRuI8hsnp3wxyh8FtIl1hbgv0MWJolyPC7m8"`
 
 		- response: 
 			```javascript 
@@ -426,7 +489,7 @@ npm run test
 	* route params: `user id`
 	* example:
 		- request:  
-			`curl -X GET "localhost:8000/orders/user/66632ef4f8607d85c5076835" -H "Content-type: application/json"`
+			`curl -X GET "localhost:8000/orders/user/66672f871b866cf08604efa1" -H "Content-type: application/json" -H "authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOiI2NjY3Mjc2ZDFiODY2Y2YwODYwNGVmNjIiLCJpYXQiOjE3MTgwMzcxODMuNzc4LCJleHAiOjE3MTgwMzg5ODMuNzc4LCJ0eXBlIjoiYWNjZXNzX3Rva2VuIn0.1PNlgTqnRuI8hsnp3wxyh8FtIl1hbgv0MWJolyPC7m8"`
 
 		- response: 
 			```javascript 
@@ -468,7 +531,7 @@ npm run test
 	* route params: `order id`
 	* example:
 		- request:  
-			`curl -X GET "localhost:8000/orders/66632ef4f8607d85c5076835/products" -H "Content-type: application/json"`
+			`curl -X GET "localhost:8000/orders/66672f871b866cf08604efa1/products" -H "Content-type: application/json" -H "authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOiI2NjY3Mjc2ZDFiODY2Y2YwODYwNGVmNjIiLCJpYXQiOjE3MTgwMzcxODMuNzc4LCJleHAiOjE3MTgwMzg5ODMuNzc4LCJ0eXBlIjoiYWNjZXNzX3Rva2VuIn0.1PNlgTqnRuI8hsnp3wxyh8FtIl1hbgv0MWJolyPC7m8"`
 
 		- response: 
 			```javascript 
@@ -496,7 +559,7 @@ npm run test
 				{
 					"id": "product line id",
 					"productId": "product id",
-					"quantity": product quantity
+					"quantity": "product quantity"
 				}
 				
 			]
@@ -505,7 +568,7 @@ npm run test
 	* route params: `order id`
 	* example:
 		- request:  
-			`curl -X PUT "localhost:8000/orders/66632ef4f8607d85c5076835" -H "Content-type: application/json" -H "authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOiI2NjYzMmVmNGY4NjA3ZDg1YzUwNzY4MzUiLCJpYXQiOjE3MTc3ODYzOTEuNTI2LCJleHAiOjE3MTc3ODY2OTEuNTEzLCJ0eXBlIjoiYWNjZXNzX3Rva2VuIn0.RD7HS6xREhtTUpb-zj4oKkQ1D8hnr_HR09RopKY6knc"`
+			`curl -X PUT "localhost:8000/orders/66672f871b866cf08604efa1" -H "Content-type: application/json" -H "authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOiI2NjY3Mjc2ZDFiODY2Y2YwODYwNGVmNjIiLCJpYXQiOjE3MTgwMzcxODMuNzc4LCJleHAiOjE3MTgwMzg5ODMuNzc4LCJ0eXBlIjoiYWNjZXNzX3Rva2VuIn0.1PNlgTqnRuI8hsnp3wxyh8FtIl1hbgv0MWJolyPC7m8" -d '{ "productLine": [{id:"66672f871b866cf08604efa4", productId": "66672f311b866cf08604ef99", "quantity": 19}]}'`
 
 		- response: 
 			```javascript 

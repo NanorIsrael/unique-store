@@ -68,7 +68,7 @@ describe("AuthTokenService", () => {
       ).rejects.toThrow("account id required");
     });
 
-    it.skip("should create tokens and save them", async () => {
+    it("should create tokens and save them", async () => {
       const mockUserId = mockToken.user_id;
       (Token.findById as jest.Mock).mockResolvedValue(null);
       const mockAccessToken = "access_token";

@@ -11,15 +11,16 @@ export interface ProductDoc extends IProduct, Document {
   _id: Types.ObjectId;
 }
 
-const productSchema = new mongoose.Schema({
-  name: String,
-  stock: Number,
-  price: Number,
-  createdAt: {
-    type: Date,
-    default: Date.now,
+const productSchema = new mongoose.Schema(
+  {
+    name: String,
+    stock: Number,
+    price: Number,
   },
-});
+  {
+    timestamps: true,
+  },
+);
 
 const Product = mongoose.model<ProductDoc>("Product", productSchema);
 

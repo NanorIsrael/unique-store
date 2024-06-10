@@ -89,11 +89,13 @@ class UserController {
       }
 
       const user = await userService.deletUserById(id);
+
       if (!user) {
         throw new BadRequestError(`user with id: ${id} does not exist.`);
       }
       res.status(200).json(user);
     } catch (err) {
+      console.log("==========>", err);
       next(err);
     }
   }

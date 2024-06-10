@@ -2,8 +2,9 @@ import request from "axios";
 import { IProduct, ProductDoc } from "./product.schema";
 import { AdminDoc } from "../user/admin/admin.schema";
 import { IUser, UserDoc } from "../user/user.schema";
+import mongoose from "mongoose";
 
-describe("product controller ", () => {
+describe("product controller", () => {
   const baseUrl: string = process.env.SERVER_URL as string;
   let newProduct: IProduct;
   let testProduct: ProductDoc;
@@ -18,80 +19,95 @@ describe("product controller ", () => {
       password: "tesA@123",
       name: "testUser",
     };
+    try {
+      await request(
+        options(baseUrl + "/users/register", "POST", {
+          data: testUser,
+        }),
+      );
 
-    await request(
-      options(baseUrl + "/users/register", "POST", {
-        data: testUser,
-      }),
-    );
+      const loggedInUser = await request(
+        options(baseUrl + "/users/login", "POST", null, {
+          authorization: `Basic ${btoa(`${testUser.email}:${testUser.password}`)}`,
+        }),
+      );
 
-    const loggedInUser = await request(
-      options(baseUrl + "/users/login", "POST", null, {
-        authorization: `Basic ${btoa(`${testUser.email}:${testUser.password}`)}`,
-      }),
-    );
+      const results = loggedInUser.data;
+      accessToken = results.accessToken;
 
-    const results = loggedInUser.data;
-    accessToken = results.accessToken;
-
-    const createAdminResponse = await request(
-      options(
-        baseUrl + `/users/admin`,
-        "POST",
-        { data: { email: testUser.email } },
-        {
-          authorization: `JWT ${accessToken}`,
-        },
-      ),
-    );
-    adminTester = createAdminResponse.data;
+      const createAdminResponse = await request(
+        options(
+          baseUrl + `/users/admin`,
+          "POST",
+          { data: { email: testUser.email } },
+          {
+            authorization: `JWT ${accessToken}`,
+          },
+        ),
+      );
+      adminTester = createAdminResponse.data;
+    } catch (error) {
+      console.error("Error in beforeAll:", extractAxiosError(error));
+      throw error;
+    }
   });
+
   beforeEach(async () => {
     newProduct = {
       name: "test product",
       stock: 5,
       price: 90.99,
     };
-
-    createdProduct = await request(
-      options(
-        baseUrl + "/products",
-        "POST",
-        { data: newProduct },
-        {
-          authorization: `JWT ${accessToken}`,
-        },
-      ),
-    );
-    testProduct = createdProduct.data;
+    try {
+      createdProduct = await request(
+        options(
+          baseUrl + "/products",
+          "POST",
+          { data: newProduct },
+          {
+            authorization: `JWT ${accessToken}`,
+          },
+        ),
+      );
+      testProduct = createdProduct.data;
+    } catch (error) {
+      console.error("Error in beforeEach:", extractAxiosError(error));
+      throw error;
+    }
   });
 
   afterEach(async () => {
     try {
-      await request(
-        options(baseUrl + `/products/${testProduct._id}`, "DELETE", null, {
-          authorization: `JWT ${accessToken}`,
-        }),
-      );
+      if (testProduct && testProduct._id) {
+        await request(
+          options(baseUrl + `/products/${testProduct._id}`, "DELETE", null, {
+            authorization: `JWT ${accessToken}`,
+          }),
+        );
+      }
     } catch (error) {
-      extractAxiosError(error);
+      console.error("Error in afterEach:", extractAxiosError(error));
     }
   });
 
   afterAll(async () => {
     try {
-      await request(
-        options(baseUrl + `/users/${adminTester.user_id}`, "DELETE", null, {
-          authorization: `JWT ${accessToken}`,
-        }),
-      );
-      await request(
-        options(baseUrl + `/users/admin/${adminTester._id}`, "DELETE", null, {
-          authorization: `JWT ${accessToken}`,
-        }),
-      );
+      if (adminTester) {
+        await request(
+          options(baseUrl + `/users/${adminTester.user_id}`, "DELETE", null, {
+            authorization: `JWT ${accessToken}`,
+          }),
+        );
+        await request(
+          options(baseUrl + `/users/admin/${adminTester._id}`, "DELETE", null, {
+            authorization: `JWT ${accessToken}`,
+          }),
+        );
+      }
     } catch (error) {
-      extractAxiosError(error);
+      console.error("Error in afterAll:", extractAxiosError(error));
+    } finally {
+      await mongoose.connection.close();
     }
   });
 
@@ -102,15 +118,19 @@ describe("product controller ", () => {
   });
 
   it("should find a product by id", async () => {
-    const response = await request(
-      options(baseUrl + `/products/${testProduct._id}`, "GET", null, {
-        authorization: `JWT ${accessToken}`,
-      }),
-    );
-    const body = response.data;
-    expect(response.status).toEqual(200);
-    expect(body).toHaveProperty("_id");
-    expect(body._id).toEqual(testProduct._id);
+    try {
+      const response = await request(
+        options(baseUrl + `/products/${testProduct._id}`, "GET", null, {
+          authorization: `JWT ${accessToken}`,
+        }),
+      );
+      const body = response.data;
+      expect(response.status).toEqual(200);
+      expect(body).toHaveProperty("_id");
+      expect(body._id).toEqual(testProduct._id);
+    } catch (error) {
+      console.error("Error in afterEach:", extractAxiosError(error));
+    }
   });
 
   it("should get all product", async () => {
@@ -139,8 +159,6 @@ const options = (
 
 function extractAxiosError(error: any) {
   if (error.response) {
-    // The request was made and the server responded with a status code
-    // that falls out of the range of 2xx
     return {
       status: error.response.status,
       statusText: error.response.statusText,
@@ -148,12 +166,10 @@ function extractAxiosError(error: any) {
       data: error.response.data,
     };
   } else if (error.request) {
-    // The request was made but no response was received
     return {
       request: error.request,
     };
   } else {
-    // Something happened in setting up the request that triggered an Error
     return {
       message: error.message,
     };

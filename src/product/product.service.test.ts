@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 import dataSource from "../utils";
 import Product, { IProduct, ProductDoc } from "./product.schema";
-import { ProductService } from "./product-service";
+import { ProductService } from "./product.service";
 
 jest.mock("./product-schema");
 
@@ -98,13 +98,16 @@ describe("ProductService", () => {
       });
 
       const productService = new ProductService();
-      const result = await productService.updateProduct();
+      const result = await productService.updateProduct(
+        "updated product id",
+        mockProducts,
+      );
 
       expect(Product.findByIdAndUpdate).toHaveBeenCalledWith(
         "8098",
         mockProducts,
       );
-      expect(result.name).toEqual("updated product name");
+      expect(result?.name).toEqual("updated product name");
     });
   });
 
@@ -118,7 +121,7 @@ describe("ProductService", () => {
       const result = await productService.deleteProduct("8098");
 
       expect(Product.findByIdAndUpdate).toHaveBeenCalledWith("8098");
-      expect(result.name).toEqual("deleted product");
+      expect(result?.name).toEqual("deleted product");
     });
   });
 
