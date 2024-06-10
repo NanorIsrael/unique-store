@@ -5,6 +5,7 @@
 ## TechStack
 - Nodejs
 - Typescript
+- redis
 - Mongodb with mongoose
 
 ## Run
@@ -15,9 +16,12 @@ npm run test
 
 ## Note:
 - User roles have been seperated from admin roles.
-to creat admin check user api docs for details.
-- envs can be found in the env.txt file
-
+to create admin check user api docs for details.
+- envs can be found in the example_env file
+- image can be run using docker compoze.
+## Run image
+docker-compose build
+docker-compose up
 
 ## User API Documentation
 #### Register a user
