@@ -2,7 +2,7 @@ import express from "express";
 import ProductController from "../product/product.controller";
 import { verifyAdminUser, verifyUser } from "../common/auth";
 
-const product = express();
+const product = express.Router();
 
 product.post("/", verifyAdminUser, ProductController.createProduct);
 product.get("/", ProductController.getProductPaginated);

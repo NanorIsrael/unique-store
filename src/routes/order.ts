@@ -2,7 +2,7 @@ import express from "express";
 import OrderController from "../order/order.controller";
 import { verifyAdminUser, verifyUser } from "../common/auth";
 
-const order = express();
+const order = express.Router();
 
 order.post("/", verifyUser, OrderController.createOrder);
 order.get("/:id", verifyUser, OrderController.getOrderById);

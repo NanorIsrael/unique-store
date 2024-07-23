@@ -3,7 +3,7 @@ import userController from "../user/user.controller";
 import { verifyAdminUser, verifyUser } from "../common/auth";
 import adminUserController from "../user/admin/admin.controller";
 
-const user = express();
+const user = express.Router();
 
 user.get("/", verifyAdminUser, userController.getAllUsersByPagination);
 user.get("/:id", verifyAdminUser, userController.getUserByID);
